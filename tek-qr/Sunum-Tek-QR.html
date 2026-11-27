@@ -21,7 +21,7 @@
   --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
   --f-story:"Literata", Georgia, "Times New Roman", serif;
   --f-mono:"JetBrains Mono", Consolas, "Courier New", monospace;
-  --base:clamp(17px, 0.9vw + 10px, 28px);
+  --base:clamp(17px, min(1.15vw, 2.5vh) + 7px, 38px);
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
   --bg:#0F1420; --surface:#171E2D; --surface-2:#222B3D; --fg:#ECE8E1; --muted:#9AA3B5; --line:#2E384C;
@@ -56,14 +56,17 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
   html,body{overflow:hidden}
   .app{height:100vh;height:100dvh;min-height:0;box-sizing:border-box}
   .stage{min-height:0;overflow:hidden}
-  .stage .art svg{max-height:calc(100dvh - 9em);margin-inline:auto}
-  .scene-grid{align-items:center}
+  .scene-grid{align-items:center;grid-template-columns:minmax(0,1.15fr) minmax(0,0.85fr)}
+  .scene-grid .art{width:fit-content;max-width:100%;justify-self:center}
+  .stage .scene-grid .art svg{width:auto;height:auto;max-width:100%;max-height:var(--stage-h,60vh)}
   .cover{padding-top:0.4em}
   .cover-art .art{width:fit-content;max-width:100%}
   .cover-art{margin-bottom:0.6em}
   .cover{align-items:center}
   .cover-art .art svg{height:28vh;width:auto;max-width:100%}
   .cover .lead{margin:0.4em 0 0.7em}
+  .stage .vgrid{grid-template-columns:minmax(0,min(13em,38vh)) minmax(0,1fr)}
+  .stage .opt .txt{font-size:1em}
   .stage .path{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0.5em 0.9em}
 }
 .eyebrow{font-family:var(--f-mono);font-size:0.58em;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);display:flex;gap:0.8em;flex-wrap:wrap;align-items:center}
@@ -392,7 +395,7 @@ function art(name, label){
   if (!fn) return null;
   const box = document.createElement("div");
   box.className = "art";
-  box.innerHTML = `<svg viewBox="0 0 400 ${name === "kapak" ? 150 : 300}" role="img" aria-label="${label || ""}">${fn()}</svg>`;
+  box.innerHTML = `<svg viewBox="0 0 400 ${name === "kapak" ? 150 : 300}" width="1200" height="${name === "kapak" ? 450 : 900}" role="img" aria-label="${label || ""}">${fn()}</svg>`;
   return box;
 }
 const ART_MAP = {
@@ -838,7 +841,7 @@ function renderJoin(w){
   w.append(el("div",{class:"eyebrow"}, el("span",null,"Katılım"), el("span",null,"Tek QR")));
   w.append(el("h2", {style:"text-align:center"}, "Telefonunla QR'ı bir kez okut"));
   const qr = qrPanel("BİR KEZ OKUT · SAYFAYI KAPATMA");
-  qr.style.cssText = "width:min(100%,52vh);margin:0 auto;font-size:inherit";
+  qr.style.cssText = "width:min(100%,44vh);margin:0 auto;font-size:inherit";
   w.append(qr, el("div", {class:"total", id:"joinState"}, !st.voteUrl ? "Elle sayım modu." : conn === "ok" ? "Sunucu bağlantısı hazır." : "Sunucuya bağlanılıyor…"));
 }
 
@@ -1013,9 +1016,13 @@ function fit(){
   if (!wrap) return;
   wrap.style.fontSize = "";
   if (!wideMQ.matches) return;
-  const room = stage.clientHeight;
-  let f = 1;
-  while (wrap.scrollHeight > room && f > 0.55){ f = Math.round((f - 0.03) * 100) / 100; wrap.style.fontSize = f + "em"; }
+  const room = stage.clientHeight, grid = wrap.querySelector(".scene-grid");
+  /* Çizim, sahnede yazıların dışında kalan yüksekliğe sığar; böylece yazıyı küçültmeye zorlamaz. */
+  const artRoom = () => { if (grid) stage.style.setProperty("--stage-h", Math.max(140, room - (wrap.scrollHeight - grid.offsetHeight) - 4) + "px"); };
+  /* Yer varsa yazı %20'ye kadar büyür, yoksa en az %55'e kadar küçülür. */
+  let f = 1.2;
+  wrap.style.fontSize = f + "em"; artRoom();
+  while (wrap.scrollHeight > room && f > 0.55){ f = Math.round((f - 0.03) * 100) / 100; wrap.style.fontSize = f + "em"; artRoom(); }
 }
 addEventListener("resize", fit);
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
