@@ -219,6 +219,14 @@ h2{font-size:1.6em;font-weight:700}
 .pcard p{margin:0;line-height:1.4}
 .pevid{font-size:0.72em;color:var(--muted);margin-top:0.8em;font-family:var(--f-display)}
 @media (max-width:760px){ .prof{grid-template-columns:1fr} }
+.epi{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0.7em;font-family:var(--f-display)}
+.epi-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:0.75em 0.85em;display:flex;gap:0.7em;align-items:flex-start;min-width:0}
+.epi-card .av{flex:none;width:3.4em;height:3.4em;border-radius:50%;overflow:hidden;border:3px solid var(--line);line-height:0}
+.epi-card .av svg{width:100%;height:100%}
+.epi-card b{display:block;font-size:0.9em;margin-bottom:0.2em}
+.epi-card p{margin:0;font-size:0.72em;line-height:1.4}
+.epi-card small{display:block;margin-top:0.45em;font-family:var(--f-mono);font-size:0.56em;letter-spacing:0.04em;color:var(--signal)}
+@media (max-width:760px){ .epi{grid-template-columns:1fr} }
 @media (prefers-reduced-motion: reduce){.fade,.live::before,.bubble.drop{animation:none}.meter .bar i,.opt,.opt .fill{transition:none}}
 
 /* İllüstrasyonlar: sunuma gömülü SVG, renkler temaya göre değişir */
@@ -747,6 +755,58 @@ const CAST = [
 const VOICE = [["soru","Elif'in Sarper'e sorusu"],["gunluk","Elif'in günlüğü"],["kamera","Kameraya son cümle"]];
 const clean = t => String(t).trim().replace(/^(…|\.\.\.)\s*/, "").replace(/^["“”]+|["“”]+$/g, "");
 
+/* ============ BİR YIL SONRA: KARAKTERLER ============
+   Her kartın metni sınıfın önceki seçimlerinden kurulur; altta hangi seçimlerden doğduğu yazar. */
+function epilog(){
+  const c = st.choices, sh = id => { const s = STEPS.find(x => x.id === id); return s && c[id] ? id.toUpperCase() + ": " + s.opts[c[id]].short : ""; };
+  const pick = (o, k) => o[k] || "";
+  const denizBurs = c.s7 === "1" || c.s5 === "2";
+  return [
+    { k:"elif", ad:"Elif Öğretmen", src:[sh("s2"), sh("s7")], t: [
+      pick({1:"Hâlâ 10-C'nin öğretmeni. Ödev okurken artık önce yazarına bakıyor, sonra yüzdeye.",
+            2:"Uyarı cezası dosyasında duruyor. Pişman değil.",
+            3:"Kamera önünde sustuğu anı hâlâ düşünüyor. Her dönemin ilk dersinde aynı şeyi söylüyor: “Emin değilsem, söylerim.”"}, c.s7),
+      pick({1:"Masasının çekmecesinde Sarper'in gözetim altında yazdığı o yarım sayfa duruyor.",
+            2:"Artık her ödevle birlikte sürüm geçmişini de istiyor.",
+            3:"Tespit araçlarını bir daha hiç açmadı."}, c.s2) ]},
+    { k:"zeynep", ad:"Zeynep", src:[sh("s3"), sh("s7")], t: [
+      pick({1:"Elif ona hemen inanmıştı. Zeynep bunu unutmadı. Ama Yusuf Bey'in “Kaynağın en yakın arkadaşı mı?” sorusunu da unutmadı.",
+            2:"Kapıyı çarptığı günden beri Elif'in derslerinde hep arka sırada oturuyor.",
+            3:"Belgeyi gönderdiği akşam bir şey öğrendi: Haklı olmak yetmiyor, kanıtlamak gerekiyor. Şimdi okul gazetesinde “Doğrula” köşesini yazıyor."}, c.s3),
+      pick({1:"Sarper gittiğinden beri yanındaki sıra boş.",
+            2:"Sarper'le hâlâ aynı sırada oturuyorlar.",
+            3:"Her sabah Sarper'e aynı şeyi soruyor: “Bir haber var mı?”"}, c.s7) ]},
+    { k:"betul", ad:"Betül Hanım", src:[sh("s1"), sh("s4"), sh("s5")], t: [
+      c.s1 === "1" ? "Gece 00.14'te gelen o e-postayı hâlâ saklıyor." : "",
+      c.s5 === "2" ? "Avukatıyla konuştu ama dava açmadı. Paylaşımını sildi, ekran görüntüleri hâlâ dolaşıyor."
+        : pick({1:"Toplantıda aldığı ses kaydını hiçbir yerde yayımlamadı. Ama veli toplantılarına bir daha gelmedi.",
+                2:"Elif'in o gün dosyayı açması onu yumuşattı. Gece attığı paylaşımı kendisi sildi, altına bir özür yazdı.",
+                3:"O toplantıda oğlunu ilk kez gerçekten dinledi. Şimdi okul aile birliğinde velilere yapay zekâ semineri düzenliyor."}, c.s4) ]},
+    { k:"dbaba", ad:"Deniz ve babası", src:[sh("s1"), sh("s5"), sh("s7")], t: [
+      c.s1 === "3" ? "Her şeyi başlatan %78'lik çıktıyı Yusuf Bey'in masasına o koymuştu." : "",
+      denizBurs ? "Bursu Deniz aldı. Babası her fırsatta “Adalet yerini buldu” diyor. Deniz ise konu açılınca susuyor."
+        : c.s5 === "1" ? "Deniz bir sıra aşağıda kaldı. O gece attığı mesajı sonradan sildi, ama altındaki 47 kalbi kimse unutmadı."
+        : "Deniz'in adı listede hâlâ “yedek” olarak bekliyor. Babası İl Müdürlüğü'ne üç dilekçe yazdı." ]},
+    { k:"yusuf", ad:"Yusuf Bey", src:[sh("s4"), sh("s6")], t: [
+      pick({1:"Tespit aracının yıllık lisansını imzaladı. İtiraz dilekçeleri her ay biraz daha kabarıyor.",
+            2:"Öğretmenlerden ek ders saati şikâyeti eksik olmuyor. Yine de il toplantısında okulu örnek gösterdi.",
+            3:"“YZ beyanı” şablonunu ilçedeki diğer okullara kendisi sunuyor. Fikrin Elif'ten çıktığını pek söylemiyor."}, c.s6),
+      c.s4 === "2" ? "Geçen yılın sıfırları yeniden incelendi. Dört öğrencinin notu düzeltildi." : "" ]},
+    { k:"muhabir", ad:"Muhabir", src:[sh("s7")], t: [
+      pick({1:"Haberi “Öğretmen canlı yayında açıkladı: Kopya” başlığıyla verdi. Bir milyondan fazla izlendi.",
+            2:"“Sorumluluğu üstlenen öğretmen” haberi bölgesel gazetecilik ödülü aldı.",
+            3:"“Öğretmen sessiz kaldı” başlığını attı. Bir yıl sonra okula yeniden geldi, bu kez kurul toplantısını izlemek için."}, c.s7) ]}
+  ].map(x => ({ ...x, t: x.t.filter(Boolean).join(" "), src: x.src.filter(Boolean).join(" · ") }));
+}
+function renderEpilog(w){
+  w.append(el("div",{class:"eyebrow"}, el("span",null,"Bölüm 7"), el("span",null,"Bir yıl sonra")));
+  w.append(el("h2", null, "Peki diğerlerine ne oldu?"));
+  w.append(el("div", {class:"epi"}, epilog().map(x => {
+    const av = el("span", {class:"av", "aria-hidden":"true"}); av.innerHTML = avatar(x.k);
+    return el("div", {class:"epi-card"}, av, el("div", {style:"min-width:0"}, el("b", null, x.ad), el("p", null, x.t), el("small", null, x.src)));
+  })));
+}
+
 /* ============ DURUM ============ */
 const KEY = "mukemmel-odev-v2";
 const blank = () => ({ pos:0, choices:{}, vp:{}, texts:{}, answers:{}, hidden:{}, roles:{}, voteUrl:"", session:"", room:"", joined:0 });
@@ -790,6 +850,7 @@ function flow(){
     if (s.converge) f.push({t:"scene", g, title: i===STEPS.length-1 ? "Son" : "Hikâye sürüyor", items:s.converge, art:am.conv});
     if (s.complete && s.complete.after) f.push({t:"complete", g, step:s});
   }
+  f.push({t:"epilog", g:7});
   f.push({t:"path", g:8}, {t:"profile", g:8}, {t:"reflect", g:8}, {t:"sources", g:8});
   return f;
 }
@@ -923,6 +984,7 @@ function render(){
   }
   else if (scr.t === "vote") renderVote(wrap, scr.step, scr.g);
   else if (scr.t === "complete") renderComplete(wrap, scr.step);
+  else if (scr.t === "epilog") renderEpilog(wrap);
   else if (scr.t === "path") renderPath(wrap);
   else if (scr.t === "profile") renderProfile(wrap);
   else if (scr.t === "reflect") renderReflect(wrap);
