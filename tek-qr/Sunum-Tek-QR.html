@@ -61,7 +61,8 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
   .cover{padding-top:0.4em}
   .cover-art .art{width:fit-content;max-width:100%}
   .cover-art{margin-bottom:0.6em}
-  .cover-art .art svg{height:16vh;width:auto;max-width:100%}
+  .cover{align-items:center}
+  .cover-art .art svg{height:28vh;width:auto;max-width:100%}
   .cover .lead{margin:0.4em 0 0.7em}
   .stage .path{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0.5em 0.9em}
 }
@@ -92,7 +93,6 @@ h2{font-size:1.6em;font-weight:700}
 
 .cover{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:2em;align-items:start;padding-top:1.5em}
 .cover .lead{font-size:1.15em;color:var(--muted);max-width:28em;margin:0.6em 0 1em}
-.cover .how{font-family:var(--f-display);font-size:0.8em;display:flex;flex-direction:column;gap:0.5em;max-width:32em}
 .side{display:flex;flex-direction:column;gap:0.8em}
 .roles{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:1em;display:flex;flex-direction:column;gap:0.45em;font-family:var(--f-display);font-size:0.7em}
 .roles h3{margin:0 0 0.3em;font-size:1em;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted)}
@@ -819,11 +819,7 @@ function renderCover(w){
     el("div", {class:"cover-art"}, art("kapak", "Elif Öğretmen, Sarper ve %78 diyen ekran")),
     el("div",{class:"eyebrow"}, el("span",{class:"chip"}, "Eleştirel ve Analitik Düşünme"), el("span",{class:"chip"}, "Hikâye tamamlama")),
     el("h1", {style:"margin-top:0.35em"}, "Mükemmel Ödev"),
-    el("p", {class:"lead"}, "Bir öğretmen, bir öğrenci ve %78 diyen bir makine. Hikâyenin her kritik anında kararı siz vereceksiniz. Bazı cümleleri de siz yazacaksınız."),
-    el("div", {class:"how"},
-      el("div", null, "QR kodu başta bir kez okutun. Her soru telefonunuza kendiliğinden gelecek; seçeneğinizi işaretleyin."),
-      el("div", null, "En çok oyu alan seçenek yeşile döner ve hikâye o yoldan devam eder. Oylar eşit çıkarsa 15 saniyelik yeni bir oylama yapılır."),
-      el("div", null, "Mikrofon simgesini gördüğünüzde cevabınızı sesli söyleyin. Cevabınız hikâyenin bir parçası olacak."))
+    el("p", {class:"lead"}, "Bir öğretmen, bir öğrenci ve %78 diyen bir makine. Hikâyenin her kritik anında kararı siz vereceksiniz. Bazı cümleleri de siz yazacaksınız.")
   );
   const roles = el("div", {class:"roles"}, el("h3", null, "Seslendirenler"));
   ROLES.forEach((r, i) => {
