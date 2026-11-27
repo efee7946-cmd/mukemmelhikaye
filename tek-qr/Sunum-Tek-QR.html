@@ -190,7 +190,36 @@ h2{font-size:1.6em;font-weight:700}
 .nav .btn{font-size:0.75em}
 .fade{animation:fade .45s ease both}
 @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-@media (prefers-reduced-motion: reduce){.fade,.live::before{animation:none}.meter .bar i,.opt,.opt .fill{transition:none}}
+/* Telefonla yazılan cevaplar: ekranın altına baloncuk olarak düşer */
+.bubbles{display:flex;flex-wrap:wrap;align-content:flex-start;gap:0.5em;height:24vh;overflow:auto;padding:0.6em;border:1.5px dashed var(--line);border-radius:14px;font-family:var(--f-display);box-sizing:border-box}
+.bubble{display:inline-flex;align-items:stretch;max-width:100%;background:var(--surface);border:1.5px solid var(--line);border-radius:999px;overflow:hidden;font-size:0.8em}
+.bubble .bt{background:none;border:0;padding:0.4em 0.3em 0.4em 0.95em;text-align:left;line-height:1.3;min-width:0}
+.bubble .bx{background:none;border:0;padding:0 0.75em 0 0.4em;color:var(--muted);font-size:1.05em;opacity:.5}
+.bubble .bx:hover{opacity:1}
+.bubble.sel{border-color:var(--signal);background:var(--o1-soft)}
+.bubble.sel .bt{font-weight:700}
+.bubble.drop{animation:drop .6s cubic-bezier(.3,1.35,.5,1) both}
+@keyframes drop{from{opacity:0;transform:translateY(-70px) scale(.92)}to{opacity:1;transform:none}}
+.bempty{margin:auto;color:var(--muted);font-size:0.72em;font-style:italic;text-align:center}
+.joinbig{text-align:center;font-family:var(--f-display);font-size:1.05em;color:var(--muted)}
+.joinbig b{display:block;font-family:var(--f-mono);font-size:2.6em;line-height:1.05;color:var(--signal);font-variant-numeric:tabular-nums}
+/* Kişilik analizi */
+.prof{display:grid;grid-template-columns:minmax(0,0.9fr) minmax(0,1.1fr);gap:1.4em;align-items:start}
+.prof .lead{font-size:1.05em;margin:0.3em 0 0.9em;max-width:40em}
+.tbars{display:flex;flex-direction:column;gap:0.55em;font-family:var(--f-display);font-size:0.78em}
+.tbar{display:grid;grid-template-columns:6.5em minmax(0,1fr) 1.6em;gap:0.6em;align-items:center}
+.tbar i{display:block;height:0.7em;border-radius:99px;background:var(--surface-2);overflow:hidden}
+.tbar i b{display:block;height:100%;border-radius:99px;background:var(--muted)}
+.tbar.lead-t i b{background:var(--signal)}
+.tbar.lead-t span{font-weight:700;color:var(--fg)}
+.tbar span{color:var(--muted)} .tbar em{font-style:normal;font-family:var(--f-mono);color:var(--muted);text-align:right}
+.pcards{display:flex;flex-direction:column;gap:0.6em;font-family:var(--f-display);font-size:0.82em}
+.pcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:0.7em 0.95em}
+.pcard h3{margin:0 0 0.25em;font-family:var(--f-mono);font-size:0.68em;letter-spacing:0.1em;text-transform:uppercase;color:var(--signal)}
+.pcard p{margin:0;line-height:1.4}
+.pevid{font-size:0.72em;color:var(--muted);margin-top:0.8em;font-family:var(--f-display)}
+@media (max-width:760px){ .prof{grid-template-columns:1fr} }
+@media (prefers-reduced-motion: reduce){.fade,.live::before,.bubble.drop{animation:none}.meter .bar i,.opt,.opt .fill{transition:none}}
 
 /* İllüstrasyonlar: sunuma gömülü SVG, renkler temaya göre değişir */
 :root{
@@ -512,7 +541,7 @@ const STEPS = [
       {who:"Yusuf Bey", t: ({1:"Velinin şikâyeti masamda.", 2:"Sınıf grubu çalkalanıyor.", 3:"Bir veli seni göz yummakla suçluyor."})[st.choices.s1] + " Burs listesi Cuma 17.00'de gidiyor. O saate kadar bu işi kanıtıyla çözeceksin. Ya kopya ya değil. Arası yok."},
       {k:"time", t:"Cuma 17.00'ye kalan: 4 gün"}
     ],
-    complete:{ key:"soru", after:true, title:"Soruyu siz yazın", intro:"Pazartesi akşamı. Elif, Sarper'e sormak istediği tek bir soruyu bir kâğıda yazıp çantasına koyuyor. Henüz soramıyor.", lead:"Elif'in kâğıdındaki soru:", ph:"Sınıftan gelen soruyu yazın…", hint:"Sözlü olarak 2-3 öneri alın, sınıfın onayladığını yazın. Bu soru hikâyenin ilerisinde karşınıza çıkacak." }
+    complete:{ key:"soru", after:true, title:"Soruyu siz yazın", intro:"Pazartesi akşamı. Elif, Sarper'e sormak istediği tek bir soruyu bir kâğıda yazıp çantasına koyuyor. Henüz soramıyor.", lead:"Elif'in kâğıdındaki soru:", ph:"Sınıftan gelen soruyu yazın…", hint:"Seçilen soru hikâyenin ilerisinde karşınıza çıkacak." }
   },
 
   { id:"s2", skill:"Eleştirel düşünme · kanıtın niteliği", format:"Kanıt seç",
@@ -565,7 +594,7 @@ const STEPS = [
             "Akşam Zeynep bir fotoğraf gönderiyor: belediyenin yaz yazarlık atölyesinin katılım belgesi. Sarper Yıldız, 40 saat.",
             "Elif bilgisayarın başında uzun süre oturuyor." ]}
     },
-    complete:{ key:"gunluk", title:"Cümleyi siz tamamlayın", intro:"Perşembe gecesi. Elif günlüğüne tek bir cümle yazıyor.", lead:"Belki de bu hikâyede asıl yanılan…", ph:"…cümlenin devamı", hint:"Sözlü olarak alın. Cümle bir sonraki sahnede hikâyeye eklenecek." },
+    complete:{ key:"gunluk", title:"Cümleyi siz tamamlayın", intro:"Perşembe gecesi. Elif günlüğüne tek bir cümle yazıyor.", lead:"Belki de bu hikâyede asıl yanılan…", ph:"…cümlenin devamı", hint:"Seçilen cümle bir sonraki sahnede hikâyeye eklenecek." },
     converge: st => [
       ...(st.texts.gunluk ? [{k:"quote", t:"“Belki de bu hikâyede asıl yanılan " + clean(st.texts.gunluk) + "”"}, "Elif defteri kapatıyor."] : []),
       {k:"time", t:"Cuma · 06.30"},
@@ -674,7 +703,7 @@ const STEPS = [
             "Sarper, Elif'e bakıyor. Ne düşündüğünü anlamak imkânsız.",
             {who:"Muhabir", t:"Peki o zaman, izleyicilere ne söylemek istersiniz?"} ]}
     },
-    complete:{ key:"kamera", title:"Son cümleyi siz kurun", intro:"Elif bir an susuyor. Sonra doğrudan kameraya bakıyor.", lead:"“Bütün öğretmenlere ve öğrencilere söylemek istediğim şu…”", ph:"…Elif'in kameraya söylediği cümle", hint:"Sözlü olarak alın. Bu cümle hikâyenin son sahnesine eklenecek." },
+    complete:{ key:"kamera", title:"Son cümleyi siz kurun", intro:"Elif bir an susuyor. Sonra doğrudan kameraya bakıyor.", lead:"“Bütün öğretmenlere ve öğrencilere söylemek istediğim şu…”", ph:"…Elif'in kameraya söylediği cümle", hint:"Seçilen cümle hikâyenin son sahnesine eklenecek." },
     converge: st => {
       const pol = {
         1:"Okulda tespit aracı artık zorunlu. Kopya oranı kâğıt üzerinde düştü. Ama metne bilerek imla hatası ekleyen uygulamalar elden ele dolaşıyor. Araç bu yıl 23 öğrenciye sıfır verdi, 9'u itirazla geri alındı.",
@@ -720,16 +749,17 @@ const clean = t => String(t).trim().replace(/^(…|\.\.\.)\s*/, "").replace(/^["
 
 /* ============ DURUM ============ */
 const KEY = "mukemmel-odev-v2";
-const blank = () => ({ pos:0, choices:{}, vp:{}, texts:{}, roles:{}, voteUrl:"", session:"" });
+const blank = () => ({ pos:0, choices:{}, vp:{}, texts:{}, answers:{}, hidden:{}, roles:{}, voteUrl:"", session:"", room:"", joined:0 });
 let st = blank();
 try { const s = JSON.parse(localStorage.getItem(KEY) || "null"); if (s && typeof s === "object") st = Object.assign(blank(), s); } catch(e) {}
 /* Sunum yeni sekmede açıldığında oylar ve ilerleme sıfırdan başlar; sayfayı yenilemek (Cmd+R) korur. */
 let yeniOturum = true;
 try { yeniOturum = !sessionStorage.getItem(KEY + "-acik"); sessionStorage.setItem(KEY + "-acik", "1"); } catch(e) {}
 if (yeniOturum) st = Object.assign(blank(), { roles: st.roles, voteUrl: st.voteUrl });
-const DEFAULT_VOTE_URL = "https://script.google.com/macros/s/AKfycbxXRwuu64nRr9v6RwrVFvJnWYSl50G02zQjYWldKIG33J7ki-_IteOyQNsxe8lg97IzWw/exec";
+const DEFAULT_VOTE_URL = "https://script.google.com/macros/s/AKfycbwdtS1t33VDuk8iA6AA24MmUnLXIshEkUCNOHb28NiPcMe9HfkZhXpllyJBzgb-AlH_FA/exec";
 /* Eski dağıtımlar: tarayıcıda kayıtlıysa yeni adrese geçirilir */
 const OLD_VOTE_URLS = [
+  "https://script.google.com/macros/s/AKfycbxXRwuu64nRr9v6RwrVFvJnWYSl50G02zQjYWldKIG33J7ki-_IteOyQNsxe8lg97IzWw/exec",
   "https://script.google.com/macros/s/AKfycbzsh2OXVluB9_2xGHAnb70mFqVU61Ks9xWR_GzXfhLCMi281-ExbVCb0VnLtji_LQ32Kw/exec",
   "https://script.google.com/macros/s/AKfycbyYpCDV9ev5_q6xntn6FsxAtvsPPXRnYVxMbfVd57UHgaoyAURn9kKKphRr0ZB-4Yyg2g/exec",
   "https://script.google.com/macros/s/AKfycby1fZpDe6-bJFPrw1YEoE83UlzyI7i_ObOsR6JgZtlndN54KpJAmYakqakLvZ0FFBXF/exec",
@@ -739,6 +769,8 @@ if (!st.voteUrl || OLD_VOTE_URLS.includes(st.voteUrl)) st.voteUrl = DEFAULT_VOTE
 /* Kod.gs içindeki SUNUCU_ANAHTARI ile aynı olmalı */
 const PRESENTER_KEY = "4aec09d9610a541a";
 if (!st.session) st.session = Math.random().toString(36).slice(2, 8);
+/* Ders oturumu: QR'ı okutan cihazlar bu kimlikle sayılır (yeniden oylamada değişmez) */
+if (!st.room) st.room = Math.random().toString(36).slice(2, 8);
 function save(){ try { localStorage.setItem(KEY, JSON.stringify(st)); } catch(e) {} }
 let tieEnds = 0, closeEnds = 0, advanceTimer = null, resetArm = false, conn = "";
 
@@ -758,7 +790,7 @@ function flow(){
     if (s.converge) f.push({t:"scene", g, title: i===STEPS.length-1 ? "Son" : "Hikâye sürüyor", items:s.converge, art:am.conv});
     if (s.complete && s.complete.after) f.push({t:"complete", g, step:s});
   }
-  f.push({t:"path", g:8}, {t:"reflect", g:8}, {t:"sources", g:8});
+  f.push({t:"path", g:8}, {t:"profile", g:8}, {t:"reflect", g:8}, {t:"sources", g:8});
   return f;
 }
 
@@ -805,7 +837,7 @@ function clearFrom(stepIdx){
   st.session = Math.random().toString(36).slice(2, 8); /* yeniden oylamada eski oylar sayılmasın */
   for (let i=stepIdx;i<STEPS.length;i++){
     const s = STEPS[i]; delete st.choices[s.id]; delete st.vp[s.id];
-    if (s.complete) delete st.texts[s.complete.key];
+    if (s.complete){ delete st.texts[s.complete.key]; delete st.answers[s.complete.key]; delete st.hidden[s.complete.key]; }
   }
 }
 const total = (vs) => vs.among.reduce((a,k) => a + vs.counts[k], 0);
@@ -819,6 +851,8 @@ let lastSync = 0, syncBusy = false;
 function liveState(){
   const scr = flow()[st.pos];
   if (scr && scr.t === "vote" && !st.choices[scr.step.id]) return { s: scr.step, q: voteKey(scr.step), o: vstate(scr.step).among.join("") };
+  /* Yazma ekranı: telefonlarda yazı kutusu açılır */
+  if (scr && scr.t === "complete") return { s: null, tk: scr.step.complete.key, q: st.session + "-t-" + scr.step.complete.key, o: "T" };
   return { s: null, q: "", o: "" };
 }
 async function sync(){
@@ -826,14 +860,20 @@ async function sync(){
   const live = liveState(), sig = live.q + "|" + live.o, now = Date.now();
   const changed = st.liveSig !== sig;
   if (changed){ st.liveSig = sig; st.liveAt = now; save(); }
-  if (!changed && (syncBusy || now - lastSync < (live.s ? 1400 : 5000))) return;
+  if (!changed && (syncBusy || now - lastSync < (live.s || live.tk ? 1400 : 5000))) return;
   lastSync = now; syncBusy = true;
   try {
-    const params = new URLSearchParams({ action:"sync", k:PRESENTER_KEY, q:live.q, o:live.o, at:String(st.liveAt) });
+    const params = new URLSearchParams({ action:"sync", k:PRESENTER_KEY, q:live.q, o:live.o, at:String(st.liveAt), room:st.room });
     const r = await fetch(st.voteUrl + (st.voteUrl.includes("?") ? "&" : "?") + params, {cache:"no-store"});
     const j = await r.json();
-    if (j.error || (live.s ? !j.counts : !j.ok)) throw new Error(j.error || "yanit");
+    if (j.error || (live.s ? !j.counts : live.tk ? !Array.isArray(j.texts) : !j.ok)) throw new Error(j.error || "yanit");
     conn = "ok";
+    if (typeof j.joined === "number" && j.joined !== st.joined){ st.joined = j.joined; save(); }
+    if (live.tk && liveState().q === live.q){
+      const before = JSON.stringify(st.answers[live.tk] || []), now2 = JSON.stringify(j.texts);
+      if (before !== now2){ st.answers[live.tk] = j.texts; save(); }
+      paintBubbles(live.tk);
+    }
     if (live.s && liveState().q === live.q){
       const vs = vstate(live.s);
       ["1","2","3"].forEach(k => vs.counts[k] = (Number(j.counts[k]) || 0) + (vs.manual[k] || 0));
@@ -842,6 +882,7 @@ async function sync(){
   finally {
     syncBusy = false;
     const cur = liveState(); if (cur.s) paintCounts(cur.s);
+    paintJoined();
     const js = document.getElementById("joinState");
     if (js) js.textContent = conn === "err" ? "Sunucuya bağlanılamadı. İnterneti ve Apps Script dağıtımını kontrol edin." : "Sunucu bağlantısı hazır.";
   }
@@ -883,6 +924,7 @@ function render(){
   else if (scr.t === "vote") renderVote(wrap, scr.step, scr.g);
   else if (scr.t === "complete") renderComplete(wrap, scr.step);
   else if (scr.t === "path") renderPath(wrap);
+  else if (scr.t === "profile") renderProfile(wrap);
   else if (scr.t === "reflect") renderReflect(wrap);
   else if (scr.t === "sources") renderSources(wrap);
 
@@ -929,6 +971,12 @@ function renderJoin(w){
   const qr = qrPanel("BİR KEZ OKUT · SAYFAYI KAPATMA");
   qr.style.cssText = "width:min(100%,44vh);margin:0 auto;font-size:inherit";
   w.append(qr, el("div", {class:"total", id:"joinState"}, !st.voteUrl ? "Elle sayım modu." : conn === "ok" ? "Sunucu bağlantısı hazır." : "Sunucuya bağlanılıyor…"));
+  if (st.voteUrl) w.append(el("div", {class:"joinbig"}, el("b", {"data-joined":""}, String(st.joined || 0)), "kişi QR'ı okuttu"));
+}
+function paintJoined(){
+  document.querySelectorAll("[data-joined]").forEach(e => { e.textContent = String(st.joined || 0); });
+  const scr = flow()[st.pos];
+  if (scr && scr.t === "complete") paintAnsTotal(scr.step.complete.key);
 }
 
 function renderVote(w, s, g){
@@ -991,7 +1039,7 @@ function paintCounts(s){
     const fl = document.getElementById("fill-"+k); if (fl) fl.style.width = (vs.among.includes(k) ? (vs.counts[k]/sum*100) : 0) + "%";
   });
   const t = $("#total");
-  if (t) t.textContent = total(vs) + " oy" + (st.voteUrl ? (conn === "err" ? " · bağlantı sorunu, elle girin" : conn === "ok" ? " · canlı" : " · bağlanıyor…") : " · elle sayım");
+  if (t) t.textContent = total(vs) + " oy" + (st.voteUrl ? (conn === "err" ? " · bağlantı sorunu, elle girin" : conn === "ok" ? " · " + (st.joined || 0) + " kişi katıldı" : " · bağlanıyor…") : " · elle sayım");
 }
 function bump(s, k, d){
   const vs = vstate(s); if (st.choices[s.id] || !vs.among.includes(k)) return;
@@ -1020,13 +1068,64 @@ function reveal(s){
 
 function renderComplete(w, s){
   const c = s.complete;
-  w.append(el("div",{class:"eyebrow"}, el("span",{class:"mic"}, "🎙 Sözlü katılım"), el("span",{class:"chip"}, c.title)));
+  w.append(el("div",{class:"eyebrow"}, el("span",{class:"mic"}, "Telefonla katılım"), el("span",{class:"chip"}, c.title)));
   w.append(el("p", {class:"story", style:"margin:0"}, c.intro));
   const ta = el("textarea", {id:"ta-"+c.key, placeholder:c.ph, "aria-label":c.title});
   ta.value = st.texts[c.key] || "";
-  ta.addEventListener("input", () => { st.texts[c.key] = ta.value.slice(0, 300); save(); });
-  w.append(el("div", {class:"compose"}, el("div", {class:"lead2"}, c.lead), ta, el("span", {class:"hint"}, c.hint)));
+  ta.addEventListener("input", () => { st.texts[c.key] = ta.value.slice(0, 300); save(); markPicked(c.key); });
+  const how = st.voteUrl ? "Cevaplar telefonlardan aşağıya düşer. Hikâyeye girecek olanı seçmek için bir baloncuğa dokunun, isterseniz burada düzeltin. × ile gizlenir. " : "Oylama bağlantısı yok: cümleyi buraya siz yazın. ";
+  w.append(el("div", {class:"compose"}, el("div", {class:"lead2"}, c.lead), ta, el("span", {class:"hint"}, how + c.hint)));
   if (c.key === "gunluk") w.append(el("div", {class:"remind"}, el("span", {class:"remind-t"}, "Hatırlayalım:"), CAST.map(x => castCard(x, true))));
+  if (st.voteUrl){
+    w.append(el("div", {class:"bubbles", id:"bubbles", "data-key":c.key}), el("div", {class:"total", id:"ansTotal"}, ""));
+    setTimeout(() => paintBubbles(c.key, true), 0);
+  }
+}
+/* Telefonla gelen cevaplar: yenileri yukarıdan düşer; dokununca hikâyeye girer */
+function paintBubbles(key, first){
+  const box = document.getElementById("bubbles");
+  if (!box || box.dataset.key !== key) return;
+  const hid = st.hidden[key] || [];
+  const list = (st.answers[key] || []).filter(a => !hid.includes(a.i));
+  const keep = new Set(list.map(a => String(a.i)));
+  box.querySelectorAll(".bubble").forEach(b => { if (!keep.has(b.dataset.i)) b.remove(); });
+  let added = false;
+  list.forEach(a => {
+    let b = box.querySelector('.bubble[data-i="' + a.i + '"]');
+    if (!b){
+      b = el("div", {class:"bubble" + (first ? "" : " drop"), "data-i":String(a.i)},
+        el("button", {class:"bt", type:"button", title:"Hikâyeye bu cevap girsin", onclick:() => pickAnswer(key, a.i)}, ""),
+        el("button", {class:"bx", type:"button", "aria-label":"Bu cevabı gizle", onclick:() => hideAnswer(key, a.i)}, "×"));
+      box.append(b); added = true;
+    }
+    const bt = b.querySelector(".bt"); if (bt.textContent !== a.t) bt.textContent = a.t;
+  });
+  let empty = box.querySelector(".bempty");
+  if (!list.length && !empty) box.append(el("div", {class:"bempty"}, "Telefonlardan gelen cevaplar burada belirecek."));
+  if (list.length && empty) empty.remove();
+  if (added && !first) box.scrollTop = box.scrollHeight;
+  markPicked(key);
+  paintAnsTotal(key);
+}
+function paintAnsTotal(key){
+  const t = document.getElementById("ansTotal"); if (!t) return;
+  const n = (st.answers[key] || []).filter(a => !(st.hidden[key] || []).includes(a.i)).length;
+  t.textContent = n + " cevap · " + (st.joined || 0) + " kişi katıldı" + (conn === "err" ? " · bağlantı sorunu" : "");
+}
+function markPicked(key){
+  const box = document.getElementById("bubbles"); if (!box) return;
+  const cur = String(st.texts[key] || "").trim();
+  box.querySelectorAll(".bubble").forEach(b => b.classList.toggle("sel", !!cur && b.querySelector(".bt").textContent.trim() === cur));
+}
+function pickAnswer(key, i){
+  const a = (st.answers[key] || []).find(x => x.i === i); if (!a) return;
+  st.texts[key] = a.t; save();
+  const ta = document.getElementById("ta-" + key); if (ta) ta.value = a.t;
+  markPicked(key);
+}
+function hideAnswer(key, i){
+  st.hidden[key] = [...(st.hidden[key] || []), i]; save();
+  paintBubbles(key);
 }
 
 function renderPath(w){
@@ -1046,6 +1145,68 @@ function renderPath(w){
     }
   });
   w.append(p);
+}
+/* Sınıfın seçimleri → Elif'in öğretmen profili. Her seçenek bir ya da iki eğilime puan verir. */
+const TRAITS = {
+  kanit:  { ad:"Kanıtın peşinde", kisa:"Kanıt arayışı", tarif:"yargıdan önce veri isteyen, kaynağı sorgulayan",
+            guclu:"İddiayı doğrulamadan karar vermiyor. %78'in bir hüküm değil, bir olasılık olduğunu görüyor; eleştirel düşünmenin özü bu.",
+            kor:"Doğrulama uzadıkça öğrenci belirsizlikte bekliyor. İnsan, çözülecek bir vakaya dönüşebilir." },
+  seffaf: { ad:"Açık kart oynayan", kisa:"Şeffaflık", tarif:"emin olmadığını söyleyebilen, sorumluluğu üstlenen",
+            guclu:"Belirsizliği saklamıyor, hatasını sahipleniyor. Güveni kural ya da yetkiyle değil, açıklıkla kuruyor.",
+            kor:"Her şeyi açık etmek hem kendini hem öğrenciyi gereğinden fazla görünür kılabilir." },
+  empati: { ad:"Öğrencinin yanında duran", kisa:"Empati", tarif:"kararı önce insan ilişkisi üzerinden okuyan",
+            guclu:"Öğrencinin sesini ve hikâyesini önemsiyor. Sarper için güvenli bir alan açıyor.",
+            kor:"Duygusal yakınlık kanıtı tartmanın önüne geçebilir. İnanmak istediğine inanma riski var (doğrulama yanlılığı)." },
+  yenilik:{ ad:"Sistemi yeniden kuran", kisa:"Yenilik", tarif:"sorunu tek bir öğrencinin değil, sistemin sorunu olarak gören",
+            guclu:"Tek bir vakadan kalıcı bir öğrenme düzeni çıkarıyor. Yasaklamak yerine öğretmeyi seçiyor.",
+            kor:"Büyük resme bakarken bugünkü öğrencinin acil ihtiyacı geri planda kalabilir." },
+  kural:  { ad:"Kuralların bekçisi", kisa:"Kurala bağlılık", tarif:"belirsizlik karşısında yönetmeliğe ve düzene yaslanan",
+            guclu:"Tutarlı ve öngörülebilir. Herkese aynı ölçüyü uygulamak istiyor; adalet duygusu güçlü.",
+            kor:"Kuralın dayandığı kanıtı sorgulamadan bir makinenin verdiği sayıya fazla güvenebilir (otoriteye başvurma)." },
+  kacinma:{ ad:"Belirsizlikten kaçınan", kisa:"Kaçınma", tarif:"çatışmadan ve kesin hükümden uzak durmayı seçen",
+            guclu:"Aceleyle hüküm vermiyor, zarar vermemeye özen gösteriyor.",
+            kor:"Kararı zamana ya da bir araca bırakmak, sorumluluğu da bırakmak olabilir." }
+};
+const TRAIT_MAP = {
+  s1:{1:{kural:2}, 2:{empati:2}, 3:{kacinma:2}},
+  s2:{1:{kanit:1, kural:1}, 2:{kanit:2}, 3:{kacinma:1, kural:1}},
+  s3:{1:{empati:2}, 2:{kanit:1, kural:1}, 3:{kanit:2}},
+  s4:{1:{kural:2}, 2:{seffaf:2}, 3:{empati:1, seffaf:1}},
+  s5:{1:{empati:1, kural:1}, 2:{kanit:1, empati:1}, 3:{yenilik:2}},
+  s6:{1:{kural:2}, 2:{yenilik:2}, 3:{yenilik:1, seffaf:1}},
+  s7:{1:{kural:1, seffaf:1}, 2:{seffaf:2}, 3:{empati:1, kacinma:1}}
+};
+function renderProfile(w){
+  w.append(el("div",{class:"eyebrow"}, el("span",null,"Yansıtma"), el("span",{class:"chip skill"}, "Kişilik analizi")));
+  const sc = Object.fromEntries(Object.keys(TRAITS).map(k => [k, 0]));
+  const feeds = Object.fromEntries(Object.keys(TRAITS).map(k => [k, []]));
+  STEPS.forEach(s => {
+    const k = st.choices[s.id], m = k && TRAIT_MAP[s.id] && TRAIT_MAP[s.id][k];
+    if (m) Object.entries(m).forEach(([t, v]) => { sc[t] += v; feeds[t].push(s.opts[k].short.replace(/[“”"]/g, "")); });
+  });
+  const order = Object.keys(TRAITS).sort((a, b) => sc[b] - sc[a]);
+  const top = order[0], second = sc[order[1]] > 0 ? order[1] : null;
+  if (!sc[top]){
+    w.append(el("h2", null, "Bu sınıfın Elif'i"), el("p", {class:"story"}, "Profil için önce hikâyedeki soruların oylanması gerekiyor."));
+    return;
+  }
+  const T = TRAITS[top], max = Math.max(...Object.values(sc));
+  w.append(el("h2", null, "Bu sınıfın Elif'i: " + T.ad));
+  const ties = order.filter(k => sc[k] === sc[top]);
+  const low = k => TRAITS[k].kisa.toLocaleLowerCase("tr");
+  const rest = ties.length > 1
+    ? " Bu sınıfta " + ties.slice(0, -1).map(low).join(", ") + " ve " + low(ties[ties.length-1]) + " eşit ağırlıkta: Elif tek bir kalıba sığmıyor."
+    : (second ? " Onu en çok tamamlayan eğilim: " + low(second) + "." : "");
+  w.append(el("p", {class:"lead story"}, "Sınıfın seçimleriyle ortaya çıkan Elif, " + T.tarif + " bir öğretmen." + rest));
+  const bars = el("div", {class:"tbars"}, order.map(k => el("div", {class:"tbar" + (sc[k] === sc[top] ? " lead-t" : "")},
+    el("span", null, TRAITS[k].kisa), el("i", null, el("b", {style:"width:" + (sc[k] / max * 100) + "%"})), el("em", null, String(sc[k])))));
+  const cards = el("div", {class:"pcards"},
+    el("div", {class:"pcard"}, el("h3", null, "Güçlü yanı"), el("p", null, T.guclu)),
+    el("div", {class:"pcard"}, el("h3", null, "Kör noktası"), el("p", null, T.kor)),
+    el("div", {class:"pcard"}, el("h3", null, "Sınıfa soru"), el("p", null, "Bu Elif sizin öğretmeniniz olsaydı, hangi konuda ona güvenir, hangi konuda itiraz ederdiniz?")));
+  w.append(el("div", {class:"prof"},
+    el("div", null, bars, el("div", {class:"pevid"}, "Bu profili en çok besleyen seçimler: " + feeds[top].join(" · "))),
+    cards));
 }
 function renderReflect(w){
   w.append(el("div",{class:"eyebrow"}, el("span",{class:"chip skill"}, "Yansıtıcı düşünme"), el("span",null,"Kapanış")));
@@ -1071,8 +1232,8 @@ function renderSources(w){
     "Hikâye kurgudur. Karakterler, okul ve kurumlar hayalidir; tespit aracı sonuçları temsilidir. Bu materyalin metin taslağı ve kodlanmasında yapay zekâdan (Claude) yararlanılmış, içerik grup üyelerince düzenlenmiş ve kontrol edilmiştir. Oylama anonimdir, katılımcılardan kişisel veri toplanmamıştır."));
   const r = el("button", {class:"btn", type:"button", onclick:()=>{
     if (!resetArm){ resetArm = true; r.textContent = "Emin misiniz? Tekrar basın"; setTimeout(()=>{ resetArm=false; if(r.isConnected) r.textContent="Baştan başla"; }, 3000); return; }
-    const keep = {roles:st.roles, voteUrl:st.voteUrl || DEFAULT_VOTE_URL}; st = Object.assign(blank(), keep); st.session = Math.random().toString(36).slice(2,8); resetArm = false; render(); }}, "Baştan başla");
-  w.append(el("div", {class:"vbar"}, r, el("span", {class:"hint"}, "Oylar ve yazılanlar silinir. Seslendirenler ve oylama bağlantısı kalır.")));
+    const keep = {roles:st.roles, voteUrl:st.voteUrl || DEFAULT_VOTE_URL}; st = Object.assign(blank(), keep); st.session = Math.random().toString(36).slice(2,8); st.room = Math.random().toString(36).slice(2,8); resetArm = false; render(); }}, "Baştan başla");
+  w.append(el("div", {class:"vbar"}, r, el("span", {class:"hint"}, "Oylar, cevaplar ve katılımcı sayısı sıfırlanır.")));
 }
 
 /* ============ GEZİNME ============ */
