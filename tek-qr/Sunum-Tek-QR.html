@@ -248,8 +248,11 @@ const IMG_CHARS = {
 let imgN = 0;
 function charImg(key, x, y, s = 1, o = {}){
   const c = IMG_CHARS[key], k = c.k * s, id = "ci" + (++imgN);
-  return `<g${o.op ? ` opacity="${o.op}"` : ""}><defs><clipPath id="${id}"><rect x="${x-60*s}" y="${y-40*s}" width="${120*s}" height="${112*s}"/></clipPath></defs>
-    <image href="${c.src}" x="${x-c.cx*k}" y="${y-c.cy*k}" width="${c.w*k}" height="${c.h*k}" clip-path="url(#${id})"/></g>`;
+  /* Duruş: gövde ortasından eğilir; flip aynalar (yazılı kartı olanlarda kullanmayın); dim gergin sahneler için tonu koyulaştırır */
+  const py = y + 40*s, pose = `translate(${x} ${py}) rotate(${o.tilt || 0}) scale(${o.flip ? -1 : 1} 1) translate(${-x} ${-py})`;
+  const filt = o.dim ? ` style="filter:brightness(.78) saturate(.8)"` : "";
+  return `<g${o.op ? ` opacity="${o.op}"` : ""}><defs><clipPath id="${id}"><rect x="${x-70*s}" y="${y-45*s}" width="${140*s}" height="${117*s}"/></clipPath></defs>
+    <g clip-path="url(#${id})"><g transform="${pose}"><image href="${c.src}" x="${x-c.cx*k}" y="${y-c.cy*k}" width="${c.w*k}" height="${c.h*k}"${filt}/></g></g></g>`;
 }
 const CHAR = {
   elif:   { skin:"sk1", hair:"h1", style:"bun",   top:"c-elif" },
@@ -276,7 +279,7 @@ const HAIR = {
 function person(key, x, y, s = 1, o = {}){
   if (IMG_CHARS[key]) return charImg(key, x, y, s, o);
   const c = CHAR[key], h = HAIR[c.style];
-  return `<g transform="translate(${x} ${y}) scale(${s})"${o.op ? ` opacity="${o.op}"` : ""}>
+  return `<g transform="translate(${x} ${y}) rotate(${o.tilt || 0} 0 ${40*s}) scale(${o.flip ? -s : s} ${s})"${o.op ? ` opacity="${o.op}"` : ""}>
     <path d="M-26,72 L-26,40 Q-26,21 0,21 Q26,21 26,40 L26,72Z" ${F(c.top)}/>
     ${c.hood ? `<path d="M-16,22 Q0,35 16,22" ${S("a-ink",2.2)} opacity=".35"/>` : ""}
     ${c.tie ? `<path d="M0,22 L-3.5,27 L0,46 L3.5,27Z" ${F("a-tie")}/>` : ""}
@@ -322,11 +325,11 @@ const ART = {
     <circle cx="200" cy="60" r="60" ${F("alarm")} opacity=".10"/>
     <text x="200" y="72" text-anchor="middle" font-size="34" style="fill:var(--alarm)">%78</text>
     <rect x="152" y="84" width="96" height="5" rx="2.5" ${F("a-wall2")} opacity=".3"/><rect x="152" y="84" width="75" height="5" rx="2.5" ${F("alarm")}/>
-    ${person("elif", 70, 70, 1.05)}${person("sarper", 330, 70, 1.05)}
+    ${person("elif", 70, 70, 1.05)}${person("sarper", 330, 70, 1.05, {flip:true, tilt:-3})}
     <rect y="136" width="400" height="14" ${F("a-wood")}/>`,
   masa: () => `${room("a-wall", 300)}${windowNight(30, 34, 120, 92)}
     <path d="M285,0V38" ${S("a-ink",2)}/><path d="M268,52 L302,52 L294,38 L276,38Z" ${F("a-ink")}/><path d="M268,52 L302,52 L340,200 L230,200Z" ${F("signal")} opacity=".10"/>
-    ${person("elif", 285, 120, 1.25)}
+    ${person("elif", 285, 120, 1.25, {tilt:-8})}
     ${desk(0, 205, 400, 95)}
     ${laptopBack(170, 205)}
     <g>${[0,1,2,3,4].map(i => `<rect x="${300-i}" y="${195-i*4}" width="66" height="8" rx="1" ${F("a-paper")} stroke="var(--a-line)"/>`).join("")}</g>
@@ -343,22 +346,22 @@ const ART = {
     <rect x="150" y="120" width="100" height="110" ${F("a-ink")} opacity=".8"/><text x="200" y="114" text-anchor="middle" font-size="12" style="fill:var(--muted)">OKUL</text>
     <rect y="230" width="400" height="70" ${F("a-floor")}/>
     ${person("kalabalik", 60, 175, 0.85, {phone:"r"})}${person("kalabalik", 345, 172, 0.9, {phone:"l"})}
-    ${person("betul", 200, 158, 1.25, {phone:"r"})}`,
+    ${person("betul", 200, 158, 1.25, {phone:"r", tilt:4})}`,
   sinif: () => `${room()}<rect x="40" y="30" width="200" height="110" rx="6" ${F("a-board")}/><text x="140" y="92" text-anchor="middle" font-size="22" style="fill:var(--a-paper)" opacity=".8">10-C</text>
     ${clock(320, 70, 26)}
-    ${person("elif", 120, 150, 1.05)}${person("sarper", 280, 152, 1.05)}
+    ${person("elif", 120, 150, 1.05, {tilt:6})}${person("sarper", 280, 152, 1.05, {flip:true, tilt:-4, dim:true})}
     ${desk(40, 222, 320, 80)}
     <rect x="175" y="196" width="50" height="26" rx="3" ${F("a-screen")}/><text x="200" y="214" text-anchor="middle" font-size="11" style="fill:var(--alarm)">%78</text>`,
   ofis: (veli) => `${room()}<rect x="24" y="36" width="110" height="160" ${F("a-wood2")}/>
     ${[0,1,2].map(r => [0,1,2,3,4].map(i => `<rect x="${32+i*20}" y="${46+r*50}" width="${12+(i%2)*3}" height="38" ${F(["c-sarper","c-betul","c-elif","c-zeynep","c-grey"][(i+r)%5])} opacity=".75"/>`).join("")).join("")}
     ${windowNight(250, 36, 120, 80).replace(/a-moon/, "a-sky")}
-    ${person("yusuf", veli ? 250 : 220, 140, 1.15)}
-    ${veli ? person("dbaba", 130, 128, 1.25, {paper:true}) : person("elif", 80, 130, 1.2)}
+    ${person("yusuf", veli ? 250 : 220, 140, 1.15, {tilt:-5})}
+    ${veli ? person("dbaba", 130, 128, 1.25, {paper:true, tilt:6}) : person("elif", 80, 130, 1.2, {tilt:4})}
     ${desk(veli ? 170 : 120, 218, veli ? 200 : 210)}
     <rect x="${veli ? 220 : 175}" y="200" width="70" height="18" rx="2" ${F("a-ink")}/><text x="${veli ? 255 : 210}" y="213" text-anchor="middle" font-size="8" style="fill:var(--a-paper)">MÜDÜR YRD.</text>`,
   sinav: () => `${room()}<rect x="40" y="30" width="200" height="110" rx="6" ${F("a-board")}/><text x="140" y="92" text-anchor="middle" font-size="16" style="fill:var(--a-paper)" opacity=".8">40 dk</text>
     ${clock(320, 70, 26, "3. ders")}
-    ${person("sarper", 200, 150, 1.15)}
+    ${person("sarper", 200, 150, 1.15, {tilt:9, dim:true})}
     ${desk(90, 225, 220, 80)}
     <g transform="rotate(-4 200 214)"><rect x="170" y="205" width="60" height="16" ${F("a-paper")}/></g><path d="M245,214 l28,-14" ${S("a-ink",3)}/>`,
   surum: () => `${room("a-wall", 300)}<rect x="24" y="26" width="230" height="250" rx="8" ${F("a-paper")} stroke="var(--a-line)"/>
@@ -370,12 +373,12 @@ const ART = {
     <g>${gauge(80, 150, 78, "alarm", "1. araç")}${gauge(200, 150, 12, "win", "2. araç")}${gauge(320, 150, 51, "signal", "3. araç")}</g>
     <text x="200" y="250" text-anchor="middle" font-size="13" style="fill:var(--muted)">aynı metin · üç karar</text>`,
   ogretmenler: () => `${room()}<rect x="280" y="50" width="90" height="180" ${F("a-wall2")}/><rect x="280" y="50" width="22" height="180" ${F("a-wood2")}/>
-    ${person("zeynep", 335, 120, 1.1, {phone:"l"})}
-    ${person("elif", 130, 145, 1.1)}
+    ${person("zeynep", 335, 120, 1.1, {phone:"l", tilt:-6})}
+    ${person("elif", 130, 145, 1.1, {tilt:7})}
     ${desk(20, 222, 230, 80)}
     <rect x="150" y="212" width="40" height="10" ${F("a-paper")} stroke="var(--a-line)"/>
     <text x="70" y="60" font-size="11" style="fill:var(--muted)">ÖĞRETMENLER ODASI</text>`,
-  zeynep: () => `${room("a-wall2", 300)}${person("zeynep", 170, 110, 2)}
+  zeynep: () => `${room("a-wall2", 300)}${person("zeynep", 170, 110, 2, {tilt:-4})}
     <g transform="translate(250 130) rotate(6)"><rect width="90" height="150" rx="14" ${F("a-ink")}/><rect x="7" y="14" width="76" height="124" rx="6" ${F("a-paper")}/>
     <text x="45" y="62" text-anchor="middle" font-size="9" style="fill:var(--muted)">kendi ödevim</text><text x="45" y="96" text-anchor="middle" font-size="28" style="fill:var(--alarm)">%64</text></g>`,
   telefon: () => `${room("a-wall2", 300)}<circle cx="200" cy="150" r="120" ${F("o3")} opacity=".10"/>${phoneBig(125, 25,
@@ -391,7 +394,7 @@ const ART = {
      <text x="50" y="182" font-size="12" style="fill:var(--a-ink)" opacity=".8">3.214</text>`)}
     ${[0,1,2,3].map(i => `<path d="M${300+i*18},${70+i*30} l14,-8 l-2,16z" ${F("o3")} opacity="${.8-i*.15}"/>`).join("")}`,
   toplanti: () => `${room()}<rect x="150" y="30" width="100" height="70" rx="4" ${F("a-wall2")}/><text x="200" y="72" text-anchor="middle" font-size="10" style="fill:var(--muted)">CUMA 10.00</text>
-    ${person("betul", 70, 140, 1)}${person("sarper", 160, 146, 0.95)}${person("yusuf", 245, 140, 1)}${person("elif", 330, 140, 1)}
+    ${person("betul", 70, 140, 1, {tilt:6})}${person("sarper", 160, 146, 0.95, {tilt:10, dim:true})}${person("yusuf", 245, 140, 1, {tilt:-5})}${person("elif", 330, 140, 1, {tilt:-7})}
     ${desk(10, 214, 380, 90)}
     <rect x="95" y="203" width="22" height="11" rx="2" ${F("a-ink")}/><circle cx="106" cy="196" r="4" ${F("alarm")}/>
     <rect x="290" y="204" width="50" height="10" ${F("a-paper")} stroke="var(--a-line)"/>`,
@@ -411,16 +414,16 @@ const ART = {
     ${[0,1,2,3,4,5].map(i => `<rect x="200" y="${156+i*16}" width="${[140,120,135,100,130,90][i]}" height="6" rx="3" ${F("a-line")}/>`).join("")}</g>`,
   kurul: () => `${room()}
     ${[0,1,2].map(r => [...Array(9)].map((_,i) => person("kalabalik", 30+i*43+(r%2)*20, 60+r*42, 0.55, {op: .55+r*.15})).join("")).join("")}
-    ${person("yusuf", 335, 178, 0.95)}${desk(285, 238, 105, 62)}
+    ${person("yusuf", 335, 178, 0.95, {tilt:-6})}${desk(285, 238, 105, 62)}
     ${person("elif", 200, 170, 1.15)}<path d="M150,236 L250,236 L240,300 L160,300Z" ${F("a-wood2")}/><rect x="145" y="228" width="110" height="12" rx="3" ${F("a-wood")}/>
     <text x="20" y="290" font-size="12" style="fill:var(--muted)">46 öğretmen</text>`,
   kamera: () => `<rect width="400" height="300" ${F("a-sky")}/><rect x="0" y="50" width="400" height="190" ${F("a-wall2")}/><rect x="150" y="110" width="100" height="130" ${F("a-ink")} opacity=".7"/>
     <rect y="240" width="400" height="60" ${F("a-floor")}/>
-    ${person("betul", 280, 125, 0.85, {op:.9})}${person("sarper", 330, 128, 0.85, {op:.9})}
-    ${person("elif", 200, 140, 1.2)}${person("muhabir", 110, 150, 1.05, {mic:true})}
+    ${person("betul", 280, 125, 0.85, {op:.9, tilt:-5})}${person("sarper", 330, 128, 0.85, {op:.9, flip:true, dim:true})}
+    ${person("elif", 200, 140, 1.2)}${person("muhabir", 110, 150, 1.05, {mic:true, tilt:7})}
     <g transform="translate(330 205)"><rect x="-38" y="-30" width="62" height="40" rx="6" ${F("a-ink")}/><circle cx="-46" cy="-10" r="12" ${F("a-ink")}/><circle cx="-46" cy="-10" r="6" ${F("o3")} opacity=".7"/><path d="M-6,10 L-30,95 M-6,10 L18,95 M-6,10 V95" ${S("a-ink",4)}/></g>
     <rect x="16" y="16" width="86" height="26" rx="5" ${F("alarm")}/><circle cx="32" cy="29" r="5" style="fill:#fff"/><text x="44" y="34" font-size="12" style="fill:#fff">CANLI</text>`,
-  mesaj: () => `${room("a-wall2", 300)}${person("elif", 90, 140, 1.3, {phone:"r"})}
+  mesaj: () => `${room("a-wall2", 300)}${person("elif", 90, 140, 1.3, {tilt:8})}
     ${phoneBig(215, 25, `<rect width="132" height="34" ${F("a-wall2")}/><g transform="translate(20 17) scale(.42)">${person("yusuf", 0, -4, 1)}</g>
       <text x="40" y="21" font-size="10" style="fill:var(--muted)">Yusuf Bey</text>
       ${bubble(34,50,90,"c-elif",1)}${bubble(8,84,104,"a-line")}${bubble(8,112,80,"a-line")}`)}`,
