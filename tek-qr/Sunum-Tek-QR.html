@@ -106,7 +106,9 @@ h2{font-size:1.6em;font-weight:700}
 .team li::before{content:counter(u);font-family:var(--f-mono);font-weight:700;color:var(--signal);font-size:0.85em}
 .team .ad{font-weight:700}
 .team .no{font-family:var(--f-mono);color:var(--muted);font-size:0.85em}
-.cast{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0.8em}
+.cast{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:0.8em}
+.cast > *{grid-column:span 2;min-width:0}
+.cast > :nth-child(5){grid-column:2 / span 2}  /* 7 kart: alt sıra ortalı */
 .cast-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:0.8em;display:flex;flex-direction:column;align-items:center;text-align:center;gap:0.45em;font-family:var(--f-display)}
 .cast-card .av{width:5.2em;height:5.2em;border-radius:50%;overflow:hidden;border:3px solid var(--line);line-height:0}
 .cast-card .av svg,.cast-chip .av svg{width:100%;height:100%}
@@ -298,9 +300,6 @@ function person(key, x, y, s = 1, o = {}){
     ${o.mic ? `<g transform="translate(-34 26) rotate(-25)"><rect x="-2.5" y="6" width="5" height="22" rx="2" ${F("a-ink")}/><circle r="7" ${F("a-ink")}/></g>` : ""}
     ${o.paper ? `<g transform="translate(-34 34) rotate(-6)"><rect width="22" height="28" rx="2" ${F("a-paper")} stroke="var(--a-line)"/><text x="11" y="18" text-anchor="middle" font-size="8" style="fill:var(--alarm)">%78</text></g>` : ""}
   </g>`;
-}
-function toolIcon(){
-  return `<svg viewBox="-26 -26 52 52" aria-hidden="true"><rect x="-26" y="-26" width="52" height="52" ${F("a-wall2")}/><rect x="-17" y="-13" width="34" height="23" rx="3" ${F("a-screen")}/><rect x="-20" y="10" width="40" height="4" rx="2" ${F("c-grey")}/><text x="0" y="3" text-anchor="middle" font-size="10" style="fill:var(--alarm);font-family:var(--f-mono);font-weight:700">%78</text></svg>`;
 }
 let avN = 0;
 function avatar(key){
@@ -704,8 +703,7 @@ const CAST = [
   { k:"betul",  ad:"Betül Hanım",    t:"Sarper'in annesi. Oğlunu korumaya kararlı." },
   { k:"yusuf",  ad:"Yusuf Bey",      t:"Müdür yardımcısı. Okulun adını korumak istiyor." },
   { k:"dbaba",  ad:"Deniz'in babası", t:"Oğlu, burs sıralamasında Sarper'in hemen arkasında." },
-  { k:"muhabir",ad:"Muhabir",        t:"Yerel haber kanalından. Tek bir cevap istiyor." },
-  { k:"arac",   ad:"Tespit aracı",   t:"Okulun yapay zekâ tespit programı. Sarper'in ödevine %78 diyor." }
+  { k:"muhabir",ad:"Muhabir",        t:"Yerel haber kanalından. Tek bir cevap istiyor." }
 ];
 const VOICE = [["soru","Elif'in Sarper'e sorusu"],["gunluk","Elif'in günlüğü"],["kamera","Kameraya son cümle"]];
 const clean = t => String(t).trim().replace(/^(…|\.\.\.)\s*/, "").replace(/^["“”]+|["“”]+$/g, "");
@@ -899,7 +897,7 @@ function renderCover(w){
 
 function castCard(c, mini){
   const av = el("span", {class:"av", "aria-hidden":"true"});
-  av.innerHTML = c.k === "arac" ? toolIcon() : avatar(c.k);
+  av.innerHTML = avatar(c.k);
   return el("div", {class: mini ? "cast-chip" : "cast-card"}, av,
     el("div", null, el("b", null, c.ad), mini ? null : el("span", null, c.t)));
 }
