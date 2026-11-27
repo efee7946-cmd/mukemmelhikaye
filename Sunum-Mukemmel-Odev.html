@@ -1,0 +1,773 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>body{margin:0}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Mükemmel Ödev</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=JetBrains+Mono:wght@500;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+/* Layout: tek sahne, üstte ilerleme şeridi, ortada hikâye/oylama (QR + seçenek düğmeleri), altta gezinme. Projeksiyon için büyük tipografi. */
+:root{
+  --bg:#EEF1F5; --surface:#FFFFFF; --surface-2:#E2E7EE; --fg:#141A26; --muted:#5B6578; --line:#CBD3DE;
+  --signal:#B7790A; --alarm:#C9343A; --win:#17894D; --win-soft:#D5F0E1;
+  --o1:#D4473F; --o2:#B57E0B; --o3:#2273C9;
+  --o1-soft:#F8DEDC; --o2-soft:#F6EACB; --o3-soft:#D8E7F7;
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-story:"Literata", Georgia, "Times New Roman", serif;
+  --f-mono:"JetBrains Mono", Consolas, "Courier New", monospace;
+  --base:clamp(17px, 0.9vw + 10px, 28px);
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0F1420; --surface:#171E2D; --surface-2:#222B3D; --fg:#ECE8E1; --muted:#9AA3B5; --line:#2E384C;
+  --signal:#F2B33D; --alarm:#F0605D; --win:#3DD68C; --win-soft:#173A2A;
+  --o1:#F0706A; --o2:#F2B33D; --o3:#5DAEF7;
+  --o1-soft:#3A2228; --o2-soft:#3A3122; --o3-soft:#1D3048; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0F1420; --surface:#171E2D; --surface-2:#222B3D; --fg:#ECE8E1; --muted:#9AA3B5; --line:#2E384C;
+  --signal:#F2B33D; --alarm:#F0605D; --win:#3DD68C; --win-soft:#173A2A;
+  --o1:#F0706A; --o2:#F2B33D; --o3:#5DAEF7;
+  --o1-soft:#3A2228; --o2-soft:#3A3122; --o3-soft:#1D3048; color-scheme:dark }
+
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-story);font-size:var(--base);line-height:1.55;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+.app{max-width:1180px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;gap:1.1em;padding-block:0.9em 1.1em}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--signal);outline-offset:2px}
+
+.top{display:flex;align-items:center;gap:0.9em;flex-wrap:wrap;font-family:var(--f-mono);font-size:0.6em;color:var(--muted)}
+.brand{font-family:var(--f-display);font-weight:800;font-size:1.35em;color:var(--fg);letter-spacing:-0.01em}
+.prog{display:flex;gap:6px;flex:1;min-width:220px}
+.prog span{flex:1;height:30px;border-radius:6px;background:var(--surface-2);display:grid;place-items:center;font-weight:700;color:var(--muted);transition:background .3s,color .3s}
+.prog span.done{background:var(--line);color:var(--fg)}
+.prog span.now{background:var(--signal);color:var(--bg)}
+.tbtn{background:none;border:1px solid var(--line);border-radius:6px;padding:4px 10px;color:var(--muted);font-family:var(--f-mono);font-size:1em}
+.tbtn:hover{color:var(--fg);border-color:var(--muted)}
+
+.stage{flex:1;display:flex;flex-direction:column;gap:0.8em;min-width:0}
+.eyebrow{font-family:var(--f-mono);font-size:0.58em;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);display:flex;gap:0.8em;flex-wrap:wrap;align-items:center}
+.chip{border:1px solid var(--line);border-radius:999px;padding:3px 12px;color:var(--fg)}
+.chip.skill{border-color:var(--signal);color:var(--signal)}
+h1,h2{font-family:var(--f-display);text-wrap:balance;letter-spacing:-0.015em;margin:0;line-height:1.12}
+h1{font-size:3.1em;font-weight:800}
+h2{font-size:1.6em;font-weight:700}
+.story{display:flex;flex-direction:column;gap:0.75em;max-width:44em}
+.story p{margin:0}
+.time{font-family:var(--f-mono);font-size:0.62em;font-weight:700;letter-spacing:0.08em;color:var(--signal);text-transform:uppercase}
+.line{display:grid;grid-template-columns:7.5em 1fr;gap:0.9em;align-items:baseline}
+.line .who{font-family:var(--f-display);font-weight:700;font-size:0.72em;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted);text-align:right}
+.line p{font-style:italic}
+.msg{align-self:flex-start;max-width:30em;background:var(--surface);border:1px solid var(--line);border-radius:16px 16px 16px 4px;padding:0.55em 0.9em;font-family:var(--f-display);font-size:0.85em}
+.msg b{display:block;font-size:0.7em;color:var(--muted);font-weight:700}
+.meter{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:0.9em 1.1em;font-family:var(--f-mono);max-width:28em}
+.meter .lab{font-size:0.55em;letter-spacing:0.1em;color:var(--muted);text-transform:uppercase}
+.meter .val{font-size:2.6em;font-weight:700;color:var(--alarm);line-height:1.1;font-variant-numeric:tabular-nums}
+.meter .bar{height:10px;border-radius:5px;background:var(--surface-2);overflow:hidden;margin-block:0.4em}
+.meter .bar i{display:block;height:100%;background:var(--alarm);width:0;transition:width 1.6s cubic-bezier(.2,.7,.2,1)}
+.meter .sub{font-size:0.6em;color:var(--muted)}
+.quote{font-size:1.2em;font-style:italic;border-left:4px solid var(--signal);padding-left:0.8em}
+.live{display:inline-flex;align-items:center;gap:0.4em;font-family:var(--f-mono);font-size:0.6em;font-weight:700;color:var(--alarm);letter-spacing:0.1em}
+.live::before{content:"";width:0.7em;height:0.7em;border-radius:50%;background:var(--alarm);animation:blink 1.2s infinite}
+@keyframes blink{50%{opacity:0.2}}
+
+.cover{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:2em;align-items:start;padding-top:1.5em}
+.cover .lead{font-size:1.15em;color:var(--muted);max-width:28em;margin:0.6em 0 1em}
+.cover .how{font-family:var(--f-display);font-size:0.8em;display:flex;flex-direction:column;gap:0.5em;max-width:32em}
+.side{display:flex;flex-direction:column;gap:0.8em}
+.roles{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:1em;display:flex;flex-direction:column;gap:0.45em;font-family:var(--f-display);font-size:0.7em}
+.roles h3{margin:0 0 0.3em;font-size:1em;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted)}
+.roles label{display:grid;grid-template-columns:8.5em 1fr;gap:0.6em;align-items:center}
+.roles input{font:inherit;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:4px 8px;min-width:0}
+.roles .st{font-family:var(--f-mono);font-size:0.85em;color:var(--muted)}
+.roles .st.ok{color:var(--win)}
+
+/* Oylama */
+.vgrid{display:grid;grid-template-columns:minmax(0,13em) minmax(0,1fr);gap:1.2em;align-items:start}
+.qr{background:#FFFFFF;border-radius:14px;padding:0.7em;display:flex;flex-direction:column;align-items:center;gap:0.4em;border:1px solid var(--line)}
+.qr .code{width:100%;aspect-ratio:1;display:grid;place-items:center;max-width:100%}
+.qr .code img,.qr .code canvas{width:100%!important;height:auto!important;image-rendering:pixelated}
+.qr .cap{font-family:var(--f-mono);font-size:0.5em;color:#3A4254;text-align:center;font-weight:700;letter-spacing:0.06em}
+.qr .ph{font-family:var(--f-display);font-size:0.6em;color:#3A4254;text-align:center;padding:1em;border:2px dashed #B9C2CF;border-radius:10px}
+.total{font-family:var(--f-mono);font-size:0.6em;color:var(--muted);text-align:center}
+.opts{display:flex;flex-direction:column;gap:0.6em;min-width:0}
+.opt{--c:var(--o1);--s:var(--o1-soft);position:relative;overflow:hidden;background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:0.7em 0.9em;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:0.8em;align-items:center;transition:opacity .4s, border-color .3s, background .3s;min-width:0}
+.opt[data-k="2"]{--c:var(--o2);--s:var(--o2-soft)} .opt[data-k="3"]{--c:var(--o3);--s:var(--o3-soft)}
+.opt .fill{position:absolute;inset:0 auto 0 0;width:0;background:var(--s);transition:width .6s ease;z-index:0}
+.opt > *:not(.fill){position:relative;z-index:1}
+.opt .num{font-family:var(--f-mono);font-weight:700;font-size:0.9em;width:2em;height:2em;border-radius:8px;display:grid;place-items:center;background:var(--c);color:var(--bg)}
+.opt .txt{font-family:var(--f-display);font-size:0.88em;line-height:1.3}
+.opt .right{display:flex;align-items:center;gap:0.35em;font-family:var(--f-mono)}
+.opt .right output{min-width:1.8em;text-align:right;font-size:1.5em;font-weight:700;font-variant-numeric:tabular-nums;color:var(--c)}
+.opt .right button{width:1.6em;height:1.6em;border-radius:6px;border:1px solid var(--line);background:var(--bg);font-weight:700;font-size:0.7em;opacity:0.6}
+.opt .right button:hover{opacity:1}
+.opt.win{--c:var(--win);--s:var(--win-soft);border-color:var(--win);background:var(--win-soft)}
+.opt.win .fill{width:100%!important}
+.opt.lose,.opt.out{opacity:0.3}
+.vbar{display:flex;gap:0.7em;flex-wrap:wrap;align-items:center;font-family:var(--f-display);font-size:0.75em}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:0.5em 1.1em;font-family:var(--f-display);font-weight:700}
+.btn.primary{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.btn:disabled{opacity:0.4;cursor:default}
+.banner{font-family:var(--f-display);font-weight:700;font-size:1.05em;padding:0.55em 0.9em;border-radius:10px;background:var(--surface);border:1px solid var(--line)}
+.banner.tie{border-color:var(--signal);color:var(--signal)}
+.banner.ok{border-color:var(--win);color:var(--win);background:var(--win-soft)}
+.count{font-family:var(--f-mono);font-weight:700;font-size:2.4em;color:var(--signal);font-variant-numeric:tabular-nums;line-height:1}
+.hint{font-family:var(--f-mono);font-size:0.55em;color:var(--muted)}
+
+.compose{display:flex;flex-direction:column;gap:0.6em;max-width:44em}
+.compose .lead2{font-size:1.25em;font-style:italic}
+.compose textarea{font:inherit;font-style:italic;background:var(--surface);color:var(--fg);border:2px solid var(--line);border-radius:12px;padding:0.6em 0.8em;min-height:3.2em;resize:vertical;width:100%;box-sizing:border-box}
+.mic{display:inline-flex;gap:0.5em;align-items:center;font-family:var(--f-mono);font-size:0.58em;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--signal)}
+
+.path{display:flex;flex-direction:column;gap:0.45em;font-family:var(--f-display);font-size:0.74em}
+.prow{display:grid;grid-template-columns:3.2em minmax(0,1fr) auto;gap:0.8em;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:0.5em 0.8em}
+.prow.voice{background:transparent;border-style:dashed}
+.prow .n{font-family:var(--f-mono);font-weight:700;color:var(--signal)}
+.prow small{display:block;color:var(--muted);font-size:0.75em}
+.prow .v{font-family:var(--f-mono);font-size:0.8em;color:var(--muted);white-space:nowrap}
+.refl{display:flex;flex-direction:column;gap:0.9em;max-width:42em}
+.refl div{display:grid;grid-template-columns:2em 1fr;gap:0.6em;font-family:var(--f-display);font-size:1.05em}
+.refl b{font-family:var(--f-mono);color:var(--signal)}
+.src{font-size:0.72em;display:flex;flex-direction:column;gap:0.5em;max-width:48em}
+.src p{margin:0;padding-left:1.5em;text-indent:-1.5em}
+.ethic{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:0.9em 1.1em;font-size:0.72em;max-width:48em}
+
+.nav{display:flex;justify-content:space-between;align-items:center;gap:1em;border-top:1px solid var(--line);padding-top:0.7em;font-family:var(--f-display)}
+.nav .btn{font-size:0.75em}
+.fade{animation:fade .45s ease both}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){.fade,.live::before{animation:none}.meter .bar i,.opt,.opt .fill{transition:none}}
+
+@media (max-width:760px){
+  .cover,.vgrid{grid-template-columns:1fr}
+  .qr{max-width:16em}
+  h1{font-size:2.2em}
+  .line{grid-template-columns:1fr;gap:0.1em}
+  .line .who{text-align:left}
+  .prow{grid-template-columns:2.4em minmax(0,1fr)}
+  .prow .v{grid-column:2}
+}
+</style>
+
+<div class="app">
+  <header class="top">
+    <span class="brand">Mükemmel Ödev</span>
+    <div class="prog" id="prog" aria-label="İlerleme"></div>
+    <button class="tbtn" id="themeBtn" type="button" title="Tema (T)">Tema</button>
+    <button class="tbtn" id="fsBtn" type="button" title="Tam ekran (F)">Tam ekran</button>
+  </header>
+  <main class="stage" id="stage" aria-live="polite"></main>
+  <nav class="nav">
+    <button class="btn" id="backBtn" type="button">← Geri</button>
+    <span class="hint">→ / boşluk: ileri · Enter: sonucu göster · 1-2-3: elle oy ekle (Shift ile azalt)</span>
+    <button class="btn primary" id="nextBtn" type="button">İleri →</button>
+  </nav>
+</div>
+
+<script>
+/* ============ HİKÂYE VERİSİ ============ */
+const INTRO = [
+  { title:"Pazar gecesi", items:[
+    {k:"time", t:"Pazar · 23.40"},
+    "Elif Öğretmen'in mutfak masasında 28 ödev var. Konu: “Dijital Ayak İzimiz”. İki sayfalık bir deneme.",
+    "27'si beklediği gibi. Kısa, biraz dağınık, samimi.",
+    "Sonra Sarper'in dosyası açılıyor.",
+    "Kusursuz paragraflar. “Dijital panoptikon” gibi kavramlar. Üç akademik kaynak. Oysa Sarper, sesli okumada bile takılan, sözlüde iki cümleyi zor birleştiren, sınıfın en sessiz öğrencisi."
+  ]},
+  { title:"Kırmızı ekran", items:[
+    {k:"time", t:"Pazar · 23.47"},
+    "Elif metni okulun lisansladığı tespit aracına yüklüyor.",
+    {k:"meter", v:78, label:"YZ tespit sonucu", sub:"Yüksek olasılıkla yapay zekâ tarafından üretildi."},
+    "Bir şey daha var. Bu ödev, okulun “Dijital Vatandaşlık Bursu” sıralamasına puan olarak giriyor. Sarper'in ailesi, onun üniversiteye gidebilmesi için bu bursa güveniyor. Liste Cuma 17.00'de il müdürlüğüne gidecek.",
+    "Yönetmelik açık: İntihal tespit edilen ödev sıfır sayılır, veli bilgilendirilir.",
+    {k:"time", t:"Saat 23.52"}
+  ]}
+];
+
+const STEPS = [
+  { id:"s1", skill:"Analitik düşünme", format:"Karar anı",
+    q:"Elif Öğretmen bu gece ne yapmalı?",
+    opts:{
+      1:{ t:"Yönetmeliği uygulamalı: Ödevi sıfır sayıp veliye e-posta göndermeli.", short:"Sıfır ver, veliye bildir",
+          scene:[ {k:"time", t:"Pazartesi · 07.50"},
+            "Elif e-postayı gece 00.14'te gönderdi. Sabah, Betül Hanım okulun kapısında bekliyor. Uykusuz, elinde telefon.",
+            {who:"Betül Hanım", t:"Oğlum bu ödev için üç gece uyumadı. Bir program mı karar veriyor artık? Siz okudunuz mu, yoksa makineye mi sordunuz?"},
+            "Koridordaki öğrenciler telefonlarını çıkarıyor. Biri kayda başladı bile." ]},
+      2:{ t:"Önce Sarper'le baş başa konuşmalı, kimseye bir şey söylememeli.", short:"Önce Sarper'le konuş",
+          scene:[ {k:"time", t:"Pazartesi · ilk teneffüs"},
+            "Elif kapıyı kapatıyor ve ekranı Sarper'e çeviriyor. Sarper uzun süre %78'e bakıyor.",
+            {who:"Sarper", t:"Ben yazdım hocam. Neden bana inanmıyorsunuz?"},
+            "Kalkıp çıkıyor. On dakika sonra sınıf grubuna bir mesaj düşüyor:",
+            {k:"msg", from:"10-C Sınıf Grubu", t:"Elif Hoca Sarper'i kopyacı ilan etmiş 😳"} ]},
+      3:{ t:"Görmezden gelmeli: Kanıt kesin değil, notu verip dosyayı kapatmalı.", short:"Görmezden gel, notu ver",
+          scene:[ {k:"time", t:"Pazartesi · 12.20"},
+            "Elif ödeve 92 verdi ve bilgisayarı kapattı. Ama burs sıralamasında Sarper'in hemen arkasındaki Deniz'in babası, Müdür Yardımcısı Yusuf Bey'in kapısını çalıyor. Elinde aynı tespit aracının çıktısı var: %78.",
+            {who:"Deniz'in babası", t:"Bu çocuk bunu yazmadı. Öğretmeni de biliyordu, değil mi?"} ]}
+    },
+    converge: st => [
+      "Olay artık Elif'in mutfak masasından çıktı. Yusuf Bey onu odasına çağırıyor.",
+      {who:"Yusuf Bey", t: ({1:"Velinin şikâyeti masamda.", 2:"Sınıf grubu çalkalanıyor.", 3:"Bir veli seni göz yummakla suçluyor."})[st.choices.s1] + " Burs listesi Cuma 17.00'de gidiyor. O saate kadar bu işi kanıtıyla çözeceksin. Ya kopya ya değil. Arası yok."},
+      {k:"time", t:"Cuma 17.00'ye kalan: 4 gün"}
+    ],
+    complete:{ key:"soru", after:true, title:"Soruyu siz yazın", intro:"Pazartesi akşamı. Elif, Sarper'e sormak istediği tek bir soruyu bir kâğıda yazıp çantasına koyuyor. Henüz soramıyor.", lead:"Elif'in kâğıdındaki soru:", ph:"Sınıftan gelen soruyu yazın…", hint:"Sözlü olarak 2-3 öneri alın, sınıfın onayladığını yazın. Bu soru hikâyenin ilerisinde karşınıza çıkacak." }
+  },
+
+  { id:"s2", skill:"Eleştirel düşünme · kanıtın niteliği", format:"Kanıt seç",
+    pre:"Salı sabahı. Elif'in yalnızca bir kanıtı inceleyecek zamanı var.",
+    q:"Hangi kanıtı toplamalı?",
+    opts:{
+      1:{ t:"Sarper'e sınıfta, gözetim altında yeni bir kısa deneme yazdırmalı.", short:"Gözetimli yazı",
+          scene:[ {k:"time", t:"Salı · 3. ders"},
+            "Sarper 40 dakika boyunca boş kâğıda bakıyor. Sonunda yarım sayfa yazıyor. Cümleler dağınık, imla hataları var.",
+            "Ama son paragrafta ödevdeki “panoptikon” fikrini kendi kelimeleriyle, hatta daha cesur bir örnekle anlatıyor: okulun güvenlik kameraları.",
+            "Elif kâğıdı iki kez okuyor. Bu çocuk bu fikri biliyor. Ama ödevdeki o cümleleri o mu kurdu?" ]},
+      2:{ t:"Belgenin sürüm geçmişini istemeli.", short:"Sürüm geçmişi",
+          scene:[ "Sarper bağlantıyı gönderiyor. Sürüm geçmişi üç gün boyunca küçük küçük yazılmış bir metni gösteriyor: silinen cümleler, yazım hataları, yarım bırakılmış fikirler.",
+            {k:"time", t:"Cumartesi · 02.13"},
+            "O gece tek seferde 640 kelime yapıştırılmış.",
+            "Elif ekrana yaklaşıyor. Eski taslak ile son metin aynı fikirleri anlatıyor, ama bambaşka bir dille." ]},
+      3:{ t:"Metni ikinci bir tespit aracına yüklemeli.", short:"İkinci tespit aracı",
+          scene:[ "İkinci araç bir süre dönüp duruyor.",
+            {k:"meter", v:12, label:"2. araç sonucu", sub:"Büyük olasılıkla insan yazımı."},
+            "Elif bir üçüncüsünü deniyor: %51. Aynı metin, üç makine, üç farklı karar.",
+            "Elif ilk kez kendine soruyor: Bu araçları kim, neye göre test etti?" ]}
+    },
+    converge: () => [
+      {k:"time", t:"Perşembe · 08.15"},
+      "Elif'in elinde bir kanıt var, ama bir cevap yok.",
+      "Öğretmenler odasının kapısı çalıyor. Sarper'in sıra arkadaşı Zeynep, elinde telefonuyla içeri giriyor."
+    ]},
+
+  { id:"s3", skill:"Eleştirel dinleme · kaynağın güvenilirliği", format:"Kaynağı sorgula",
+    setup:[
+      {who:"Zeynep", t:"Hocam, ben de kendi ödevimi o programa yükledim. Her kelimesini kendim yazdım, %64 çıktı."},
+      {who:"Zeynep", t:"Bir de… Sarper yazın ücretsiz bir yazarlık kursuna gitti. Kimseye söylemedi, utanıyordu."},
+      {who:"Zeynep", t:"Sarper benim en yakın arkadaşım hocam."}
+    ],
+    q:"Elif, Zeynep'in anlattıklarına nasıl yaklaşmalı?",
+    opts:{
+      1:{ t:"Zeynep'e inanmalı: Araç güvenilmez, Sarper masum.", short:"Zeynep'e inan",
+          scene:[ "Elif rahatlıyor. Yusuf Bey'e yazıyor:",
+            {k:"msg", from:"Elif → Yusuf Bey", t:"Araç hatalı. Konuyu kapatıyorum."},
+            "Yanıt iki dakikada geliyor:",
+            {k:"msg", from:"Yusuf Bey", t:"Kaynağın kim? En yakın arkadaşı mı? Bunu veliye ve diğer ailelere nasıl anlatacağız?"},
+            "Elif telefona bakakalıyor." ]},
+      2:{ t:"Temkinli olmalı: Zeynep arkadaşını koruyor olabilir.", short:"Temkinli ol",
+          scene:[ "Elif teşekkür ediyor, ama yüzündeki şüpheyi saklayamıyor. Zeynep kapıda duruyor.",
+            {who:"Zeynep", t:"Siz de herkes gibisiniz hocam. Sarper'i baştan kafanızda mahkûm ettiniz."},
+            "Kapı sertçe kapanıyor. Elif ilk kez düşünüyor: Şüphesinin asıl sebebi ödev miydi, yoksa Sarper'in kendisi mi?" ]},
+      3:{ t:"Doğrulamalı: Kendi yazdığı bir metni araca yüklemeli, kurs belgesini istemeli.", short:"Doğrula",
+          scene:[ "Elif beş yıl önce kendi eliyle yazdığı yüksek lisans ödevini araca yüklüyor.",
+            {k:"meter", v:55, label:"Elif'in kendi metni", sub:"O yıllarda ChatGPT yoktu bile."},
+            "Akşam Zeynep bir fotoğraf gönderiyor: belediyenin yaz yazarlık atölyesinin katılım belgesi. Sarper Yıldız, 40 saat.",
+            "Elif bilgisayarın başında uzun süre oturuyor." ]}
+    },
+    complete:{ key:"gunluk", title:"Cümleyi siz tamamlayın", intro:"Perşembe gecesi. Elif günlüğüne tek bir cümle yazıyor.", lead:"Belki de bu hikâyede asıl yanılan…", ph:"…cümlenin devamı", hint:"Sözlü olarak alın. Cümle bir sonraki sahnede hikâyeye eklenecek." },
+    converge: st => [
+      ...(st.texts.gunluk ? [{k:"quote", t:"“Belki de bu hikâyede asıl yanılan " + clean(st.texts.gunluk) + "”"}, "Elif defteri kapatıyor."] : []),
+      {k:"time", t:"Cuma · 06.30"},
+      "Telefon titriyor. Betül Hanım gece bir paylaşım yapmış:",
+      {k:"msg", from:"Betül Y. · 3.214 paylaşım", t:"Oğlumu bir yapay zekâ suçladı. Öğretmeni de inandı."},
+      "09.00'da yerel bir gazeteden telefon geliyor. Yusuf Bey herkesi 10.00'da odasına çağırıyor. Sarper de orada olacak.",
+      {k:"time", t:"Listeye kalan: 7 saat"}
+    ]},
+
+  { id:"s4", skill:"Yansıtıcı düşünme · bakış açısı", format:"Replik seç",
+    pre:"Cuma 10.00. Odada sessizlik var. Betül Hanım kollarını kavuşturmuş. Sarper yere bakıyor. İlk cümleyi Elif kuracak.",
+    q:"Elif toplantıyı hangi cümleyle açmalı?",
+    opts:{
+      1:{ t:"“Betül Hanım, yönetmelik açık. Ben yalnızca kuralı uyguladım.”", short:"Kuralı savun",
+          scene:[ "Betül Hanım telefonunu masaya koyuyor. Kayıt simgesi yanıp sönüyor.",
+            {who:"Betül Hanım", t:"Kuralı uyguladınız. Peki oğluma bir kez olsun sordunuz mu?"},
+            {who:"Yusuf Bey", t:"Lütfen sakin olalım."},
+            "Sarper başını kaldırmıyor. Odadaki hava ağırlaşıyor." ]},
+      2:{ t:"“Emin olmadığım şeyler var. Elimdeki her şeyi size göstereceğim.”", short:"Şeffaf ol",
+          scene:[ "Elif dosyayı açıyor: tespit sonuçları, taslaklar, çelişen yüzdeler. Betül Hanım ilk kez sesini alçaltıyor.",
+            "Ama Yusuf Bey huzursuz.",
+            {who:"Yusuf Bey", t:"Aracın hatalı olduğunu kabul edersek, geçen yıl verdiğimiz sıfırlar ne olacak?"} ]},
+      3:{ t:"“Sarper, önce sen anlatmak ister misin?”", short:"Söz Sarper'in",
+          scene:[ "Herkes Sarper'e dönüyor. Sarper önce annesine, sonra Elif'e bakıyor.",
+            {who:"Betül Hanım", t:"Konuşmak zorunda değilsin oğlum."},
+            "Uzun bir sessizlik." ]}
+    },
+    converge: st => [
+      ...(st.texts.soru
+        ? ["Elif çantasından pazartesiden beri taşıdığı kâğıdı çıkarıyor. Sesli okuyor:", {k:"quote", t:"“" + clean(st.texts.soru) + "”"}, "Sarper kâğıda uzun süre bakıyor. Ve konuşuyor."]
+        : ["Sarper derin bir nefes alıyor. Ve konuşuyor."]),
+      ...(st.choices.s1 === "1" ? [{who:"Sarper", t:"Siz bana hiç sormadınız hocam. Direkt sıfır verdiniz."}] : []),
+      {who:"Sarper", t:"Ödevi ben yazdım. Üç gece uğraştım. Ama dilim çok kötüydü, utandım. Cumartesi gecesi metnimi ChatGPT'ye verdim ve “daha akademik yap” dedim."},
+      {who:"Sarper", t:"Fikirler benim. Cümleler… değil."},
+      "Betül Hanım oğluna bakıyor. Bunu o da bilmiyordu.",
+      "Elif ödev yönergesini açıyor ve bir şey fark ediyor: Yönergede yapay zekâyla ilgili tek bir kelime yok."
+    ]},
+
+  { id:"s5", skill:"Etik muhakeme · adalet", format:"Hakem ol",
+    pre:"Cuma 15.10. Burs listesinin gitmesine iki saat var.",
+    q:"Sarper'in ödevi için en adil karar hangisi?",
+    opts:{
+      1:{ t:"Kural yoksa ihlal de yok: Tam not verilmeli, Sarper bursa girmeli.", short:"Tam not",
+          scene:[ "Sarper listeye giriyor. Akşam, bir sıra aşağı düşen Deniz okul grubuna yazıyor:",
+            {k:"msg", from:"Deniz", t:"Demek ChatGPT'ye yazdırınca burs veriliyormuş. Ben neden kendim yazdım?"},
+            "Mesajın altına 47 kişi kalp bırakıyor." ]},
+      2:{ t:"Kısmi not: Fikirler onun ama dil değil. Puanın yarısı verilmeli.", short:"Yarım puan",
+          scene:[ "Yarım puan Sarper'i 14. sıraya düşürüyor. Burs ilk 10'a veriliyor.",
+            {who:"Betül Hanım", t:"Kural yokken nasıl ceza veriyorsunuz? Bunu avukatımla konuşacağım."},
+            "Sarper tek kelime etmeden odadan çıkıyor." ]},
+      3:{ t:"Yeniden teslim: Sarper kendi taslağını, YZ'yi nasıl kullandığını açıklayan bir notla yeniden teslim etmeli.", short:"Açıklamalı yeniden teslim",
+          scene:[ "Sarper o gece kendi taslağını yeniden düzenliyor ve sonuna bir sayfa ekliyor: “Yapay zekâyı nasıl kullandım ve neden?”",
+            "Ama liste saat 17.00'de gitti. Sarper'in adının yanında “değerlendirmede” yazıyor.",
+            {k:"msg", from:"İl Müdürlüğü", t:"Bu öğrenciyle ilgili yazılı açıklamanızı Pazartesi 12.00'ye kadar bekliyoruz."} ]}
+    },
+    converge: () => [
+      {k:"time", t:"Hafta sonu"},
+      "Okulun haber sitesinde bir anket yayımlanıyor: “Ödevlerinde yapay zekâ kullandın mı?” 312 öğrenciden 241'i “Evet” diyor.",
+      {k:"msg", from:"Yerel gazete · manşet", t:"Okullar yapay zekâya yenik mi düşüyor?"},
+      {k:"time", t:"Pazartesi · 14.00"},
+      "Öğretmenler kurulu toplanıyor. Yusuf Bey sözü Elif'e veriyor.",
+      {who:"Yusuf Bey", t:"Bu işi sen başlattın. Okulun yeni yapay zekâ politikasını da sen önereceksin."}
+    ]},
+
+  { id:"s6", skill:"Yaratıcı düşünme · geleceği tasarlamak", format:"Geleceği tasarla",
+    pre:"Kurul odasında 46 öğretmen var. Hepsi Elif'e bakıyor.",
+    q:"Elif hangi politikayı önermeli?",
+    opts:{
+      1:{ t:"Sıkı denetim: Tüm ödevler tespit aracından geçsin, %50'nin üstü otomatik sıfır olsun.", short:"Sıkı denetim",
+          scene:[ "Oylama 31'e 15. Öneri kabul ediliyor.",
+            "Teneffüste kantindeki öğrenciler “tespit aracını kandırmanın 5 yolu” videosunu izliyor bile.",
+            "Zeynep koridorda Elif'e bakıp başını iki yana sallıyor." ]},
+      2:{ t:"Süreç odaklı değerlendirme: Taslaklar, sınıf içi yazım ve kısa bir sözlü savunma notlandırılsın.", short:"Süreç odaklı",
+          scene:[ "Odada homurtu yükseliyor.",
+            {who:"Kıdemli bir öğretmen", t:"Her ödev için sözlü savunma mı? 36 kişilik sınıfta?"},
+            "Öneri kıl payı geçiyor: 24'e 22.",
+            {who:"Yusuf Bey", t:"Uygulamada boğulursak sorumlusu sensin."} ]},
+      3:{ t:"YZ okuryazarlığı: Yapay zekâ açıkça kullanılabilsin, her ödevde nasıl kullanıldığı beyan edilsin ve öğretilsin.", short:"YZ okuryazarlığı",
+          scene:[ "Odada sessizlik. Biri ayağa kalkıyor.",
+            {who:"Kıdemli bir öğretmen", t:"Yani kopyayı serbest mi bırakıyoruz?"},
+            "Tartışma bir saat sürüyor. Öneri, bir dönemlik pilot uygulama olarak yalnızca 10. sınıflarda kabul ediliyor." ]}
+    },
+    converge: () => [
+      {k:"time", t:"Pazartesi · 17.30"},
+      "Elif okuldan çıkarken kapıda bir kamera ve mikrofon bekliyor.",
+      {k:"live", t:"Canlı yayın"},
+      "Muhabirin arkasında Sarper ve Betül Hanım duruyor. Sarper'in elinde İl Müdürlüğü'nün mektubu var. Bursla ilgili son karar, yarın sabah okulun yazacağı rapora göre verilecek.",
+      "Muhabir mikrofonu Elif'e uzatıyor.",
+      {who:"Muhabir", t:"Elif Hanım, tek bir soru. Sarper kopya çekti mi?"}
+    ]},
+
+  { id:"s7", skill:"Karar verme · sorumluluk", format:"Son karar",
+    pre:"Kamera kayıtta. Sarper Elif'in gözlerinin içine bakıyor.",
+    q:"Elif canlı yayında ne cevap vermeli?",
+    opts:{
+      1:{ t:"“Evet. Kurallar ne olursa olsun, o metni o yazmadı.”", short:"“Evet, kopya.”",
+          scene:[ "Sarper'in elindeki mektup yere düşüyor. Betül Hanım oğlunun kolunu tutup kalabalığın arasından çekiyor.",
+            "Muhabir Elif'e dönüyor. Kamera hâlâ kayıtta.",
+            {who:"Muhabir", t:"Son olarak izleyicilere ne söylemek istersiniz?"} ]},
+      2:{ t:"“Hayır. Kuralı koymayan bendim. Sorumluluk benim.”", short:"Sorumluluğu üstlen",
+          scene:[ "Yusuf Bey pencereden izliyor ve telefonu eline alıyor. Bu cümle Elif'e bir soruşturmaya mal olabilir.",
+            "Sarper ilk kez başını kaldırıyor.",
+            {who:"Muhabir", t:"Son olarak izleyicilere ne söylemek istersiniz?"} ]},
+      3:{ t:"“Bir öğrencinin geleceği hakkında kamera önünde konuşmayacağım.”", short:"Cevap verme",
+          scene:[ "Muhabir mikrofonu geri çekmiyor. Kalabalıktan biri bağırıyor: “Saklayacak bir şeyiniz mi var?”",
+            "Sarper, Elif'e bakıyor. Ne düşündüğünü anlamak imkânsız.",
+            {who:"Muhabir", t:"Peki o zaman, izleyicilere ne söylemek istersiniz?"} ]}
+    },
+    complete:{ key:"kamera", title:"Son cümleyi siz kurun", intro:"Elif bir an susuyor. Sonra doğrudan kameraya bakıyor.", lead:"“Bütün öğretmenlere ve öğrencilere söylemek istediğim şu…”", ph:"…Elif'in kameraya söylediği cümle", hint:"Sözlü olarak alın. Bu cümle hikâyenin son sahnesine eklenecek." },
+    converge: st => {
+      const pol = {
+        1:"Okulda tespit aracı artık zorunlu. Kopya oranı kâğıt üzerinde düştü. Ama metne bilerek imla hatası ekleyen uygulamalar elden ele dolaşıyor. Araç bu yıl 23 öğrenciye sıfır verdi, 9'u itirazla geri alındı.",
+        2:"Okulda artık her ödevin bir taslağı ve kısa bir sözlü savunması var. Öğretmenler yorgun, ama öğrenciler fikirlerini savunmayı öğreniyor.",
+        3:"10. sınıflardaki pilot uygulama bütün okula yayıldı. Her ödevin sonunda bir “YZ beyanı” var. Bazıları dürüst, bazıları değil. Öğretmenler bunu da tartışıyor."
+      }[st.choices.s6];
+      const end = {
+        1:["Sarper o hafta okul değiştirdi. Bursu listedeki bir sonraki öğrenciye verildi.",
+           {k:"msg", from:"Sarper · bir yıl sonra", t:"Hocam, belki haklıydınız. Ama keşke kameraya söylemeden önce bana söyleseydiniz."}],
+        2:["Elif hakkında bir soruşturma açıldı ve bir uyarı cezasıyla kapandı. Sarper bursunu aldı. Sözlü sunumlarda artık ilk parmak kaldıran o.",
+           {k:"msg", from:"Sarper · bir yıl sonra", t:"Hocam, o gün kameranın önünde benim yerime siz durdunuz. Ben de artık kendi cümlelerimin arkasında duruyorum."}],
+        3:["Haber ertesi gün “Öğretmen sessiz kaldı” başlığıyla çıktı. Herkes o boşluğu kendi hikâyesiyle doldurdu. Sarper'in bursu hâlâ “değerlendirmede”.",
+           {k:"msg", from:"Sarper · bir yıl sonra", t:"Hocam, susmanız beni korudu mu, yoksa herkesin benim yerime konuşmasına mı izin verdi? Hâlâ bilmiyorum."}]
+      }[st.choices.s7];
+      return [
+        ...(st.texts.kamera ? ["O akşam Elif'in kameraya söylediği son cümle, ertesi sabah bütün haber sitelerindeydi:", {k:"quote", t:"“Bütün öğretmenlere ve öğrencilere söylemek istediğim şu: " + clean(st.texts.kamera) + "”"}] : []),
+        {k:"time", t:"Bir yıl sonra"},
+        pol,
+        ...end
+      ];
+    }
+  }
+];
+const ROLES = ["Anlatıcı","Elif Öğretmen","Sarper","Betül Hanım","Yusuf Bey","Zeynep · Muhabir","Oylama ve geçişler"];
+const VOICE = [["soru","Elif'in Sarper'e sorusu"],["gunluk","Elif'in günlüğü"],["kamera","Kameraya son cümle"]];
+const clean = t => String(t).trim().replace(/^(…|\.\.\.)\s*/, "").replace(/^["“”]+|["“”]+$/g, "");
+
+/* ============ DURUM ============ */
+const KEY = "mukemmel-odev-v2";
+const blank = () => ({ pos:0, choices:{}, vp:{}, texts:{}, roles:{}, voteUrl:"", session:"" });
+let st = blank();
+try { const s = JSON.parse(localStorage.getItem(KEY) || "null"); if (s && typeof s === "object") st = Object.assign(blank(), s); } catch(e) {}
+/* Sunum yeni sekmede açıldığında oylar ve ilerleme sıfırdan başlar; sayfayı yenilemek (Cmd+R) korur. */
+let yeniOturum = true;
+try { yeniOturum = !sessionStorage.getItem(KEY + "-acik"); sessionStorage.setItem(KEY + "-acik", "1"); } catch(e) {}
+if (yeniOturum) st = Object.assign(blank(), { roles: st.roles, voteUrl: st.voteUrl });
+const DEFAULT_VOTE_URL = "https://script.google.com/macros/s/AKfycby1fZpDe6-bJFPrw1YEoE83UlzyI7i_ObOsR6JgZtlndN54KpJAmYakqakLvZ0FFBXF/exec";
+const OLD_VOTE_URL = "https://script.google.com/macros/s/AKfycbxUeQs6d1V-k9KzCtUpifXVVomJTg_ENvDjFL4j_kw6vaIzC043m3GoU6AhnxVAelZl/exec";
+if (!st.voteUrl || st.voteUrl === OLD_VOTE_URL) st.voteUrl = DEFAULT_VOTE_URL;
+if (!st.session) st.session = Math.random().toString(36).slice(2, 8);
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(st)); } catch(e) {} }
+let tieEnds = 0, closeEnds = 0, advanceTimer = null, pollTimer = null, resetArm = false, conn = "";
+
+/* ============ AKIŞ ============ */
+function flow(){
+  const f = [{t:"cover", g:-1}];
+  INTRO.forEach(sc => f.push({t:"scene", g:0, title:sc.title, items:sc.items}));
+  for (let i=0;i<STEPS.length;i++){
+    const s = STEPS[i], g = i+1;
+    if (s.setup) f.push({t:"scene", g, title:"Soru "+g, items:s.setup});
+    f.push({t:"vote", g, step:s});
+    const ch = st.choices[s.id];
+    if (!ch) return f;
+    f.push({t:"scene", g, title:"Seçim "+g+": "+s.opts[ch].short, items:s.opts[ch].scene});
+    if (s.complete && !s.complete.after) f.push({t:"complete", g, step:s});
+    if (s.converge) f.push({t:"scene", g, title: i===STEPS.length-1 ? "Son" : "Hikâye sürüyor", items:s.converge});
+    if (s.complete && s.complete.after) f.push({t:"complete", g, step:s});
+  }
+  f.push({t:"path", g:8}, {t:"reflect", g:8}, {t:"sources", g:8});
+  return f;
+}
+
+/* ============ YARDIMCILAR ============ */
+const $ = s => document.querySelector(s);
+function el(tag, attrs, ...kids){
+  const n = document.createElement(tag);
+  if (attrs) for (const [k,v] of Object.entries(attrs)){
+    if (k === "class") n.className = v; else if (k.startsWith("on")) n.addEventListener(k.slice(2), v);
+    else if (v !== false && v != null) n.setAttribute(k, v === true ? "" : v);
+  }
+  for (const k of kids.flat()) if (k != null) n.append(k.nodeType ? k : document.createTextNode(k));
+  return n;
+}
+function renderItems(items){
+  const list = typeof items === "function" ? items(st) : items;
+  const box = el("div", {class:"story"});
+  list.forEach((it, idx) => {
+    let n;
+    if (typeof it === "string") n = el("p", null, it);
+    else if (it.k === "time") n = el("div", {class:"time"}, it.t);
+    else if (it.k === "live") n = el("div", {class:"live"}, it.t);
+    else if (it.k === "msg") n = el("div", {class:"msg"}, el("b", null, it.from), it.t);
+    else if (it.k === "quote") n = el("p", {class:"quote"}, it.t);
+    else if (it.k === "meter"){
+      const bar = el("i"); n = el("div", {class:"meter"}, el("div",{class:"lab"}, it.label), el("div",{class:"val"}, "%"+it.v), el("div",{class:"bar"}, bar), el("div",{class:"sub"}, it.sub));
+      requestAnimationFrame(() => requestAnimationFrame(() => bar.style.width = it.v + "%"));
+    }
+    else if (it.who) n = el("div", {class:"line"}, el("span",{class:"who"}, it.who), el("p", null, "“"+it.t+"”"));
+    n.classList.add("fade"); n.style.animationDelay = (idx*0.12)+"s";
+    box.append(n);
+  });
+  return box;
+}
+function vstate(s){
+  if (!st.vp[s.id]) st.vp[s.id] = { phase:"open", among:["1","2","3"], counts:{1:0,2:0,3:0}, manual:{1:0,2:0,3:0}, round:0, lottery:false };
+  return st.vp[s.id];
+}
+function clearFrom(stepIdx){
+  st.session = Math.random().toString(36).slice(2, 8); /* yeniden oylamada eski oylar sayılmasın */
+  for (let i=stepIdx;i<STEPS.length;i++){
+    const s = STEPS[i]; delete st.choices[s.id]; delete st.vp[s.id];
+    if (s.complete) delete st.texts[s.complete.key];
+  }
+}
+const total = (vs) => vs.among.reduce((a,k) => a + vs.counts[k], 0);
+
+/* ============ DİJİTAL OYLAMA BAĞLANTISI ============
+   voteUrl boşsa sayfa elle sayım moduyla çalışır.
+   Doluysa: telefon sayfası = voteUrl?q=..., sonuçlar = voteUrl?action=results&q=... (JSON {counts:{1:n,2:n,3:n}}) */
+function voteKey(s){ const vs = vstate(s); return st.session + "-" + s.id + "-r" + vs.round; }
+function phoneLink(s){
+  const vs = vstate(s);
+  return st.voteUrl + (st.voteUrl.includes("?") ? "&" : "?") + "q=" + encodeURIComponent(voteKey(s)) + "&o=" + vs.among.join("") + "&n=" + (STEPS.indexOf(s)+1);
+}
+async function pollOnce(s){
+  if (!st.voteUrl || st.choices[s.id]) return;
+  try {
+    const r = await fetch(st.voteUrl + (st.voteUrl.includes("?") ? "&" : "?") + "action=results&q=" + encodeURIComponent(voteKey(s)), {cache:"no-store"});
+    const j = await r.json();
+    const vs = vstate(s);
+    ["1","2","3"].forEach(k => vs.counts[k] = (Number(j.counts?.[k]) || 0) + (vs.manual[k] || 0));
+    conn = "ok"; paintCounts(s);
+  } catch(e){ conn = "err"; paintCounts(s); }
+}
+function startPolling(s){ stopPolling(); if (!st.voteUrl) return; pollOnce(s); pollTimer = setInterval(() => pollOnce(s), 1500); }
+function stopPolling(){ if (pollTimer){ clearInterval(pollTimer); pollTimer = null; } }
+
+/* ============ EKRANLAR ============ */
+function render(){
+  stopPolling(); if (advanceTimer){ clearTimeout(advanceTimer); advanceTimer = null; }
+  const f = flow();
+  st.pos = Math.max(0, Math.min(st.pos, f.length-1));
+  const scr = f[st.pos];
+  const stage = $("#stage"); stage.replaceChildren();
+  const wrap = el("div", {class:"fade", style:"display:flex;flex-direction:column;gap:0.8em;min-width:0"});
+  stage.append(wrap);
+
+  if (scr.t === "cover") renderCover(wrap);
+  else if (scr.t === "scene"){
+    wrap.append(el("div",{class:"eyebrow"}, el("span",null, scr.g===0 ? "Giriş" : "Bölüm "+scr.g), el("span",null, scr.title)));
+    wrap.append(renderItems(scr.items));
+  }
+  else if (scr.t === "vote") renderVote(wrap, scr.step, scr.g);
+  else if (scr.t === "complete") renderComplete(wrap, scr.step);
+  else if (scr.t === "path") renderPath(wrap);
+  else if (scr.t === "reflect") renderReflect(wrap);
+  else if (scr.t === "sources") renderSources(wrap);
+
+  const prog = $("#prog"); prog.replaceChildren();
+  ["Giriş","1","2","3","4","5","6","7"].forEach((lab, i) => {
+    const g = scr.g === 8 ? 8 : scr.g;
+    prog.append(el("span", {class: i<g ? "done" : (i===g ? "now" : "")}, lab));
+  });
+  const isLast = st.pos === f.length-1;
+  const blocked = scr.t === "vote" && !st.choices[scr.step.id];
+  $("#backBtn").disabled = st.pos === 0;
+  $("#nextBtn").disabled = isLast && !blocked;
+  $("#nextBtn").textContent = blocked ? "Sonucu göster" : (scr.t === "cover" ? "Başla →" : "İleri →");
+  save(); tick();
+}
+
+function renderCover(w){
+  const left = el("div", null,
+    el("div",{class:"eyebrow"}, el("span",{class:"chip"}, "Eleştirel ve Analitik Düşünme"), el("span",{class:"chip"}, "Hikâye tamamlama")),
+    el("h1", {style:"margin-top:0.35em"}, "Mükemmel Ödev"),
+    el("p", {class:"lead"}, "Bir öğretmen, bir öğrenci ve %78 diyen bir makine. Hikâyenin her kritik anında kararı siz vereceksiniz. Bazı cümleleri de siz yazacaksınız."),
+    el("div", {class:"how"},
+      el("div", null, "Her soruda ekranda bir QR kod belirecek. Telefonunuzla okutun ve seçeneğinizi işaretleyin."),
+      el("div", null, "En çok oyu alan seçenek yeşile döner ve hikâye o yoldan devam eder. Oylar eşit çıkarsa 10 saniyelik yeni bir oylama yapılır."),
+      el("div", null, "Mikrofon simgesini gördüğünüzde cevabınızı sesli söyleyin. Cevabınız hikâyenin bir parçası olacak."))
+  );
+  const roles = el("div", {class:"roles"}, el("h3", null, "Seslendirenler"));
+  ROLES.forEach((r, i) => {
+    const id = "role-"+i;
+    roles.append(el("label", {for:id}, el("span", null, r),
+      el("input", {id, type:"text", placeholder:"Grup üyesi", value: st.roles[r] || "", oninput: e => { st.roles[r] = e.target.value; save(); }})));
+  });
+  const conf = el("div", {class:"roles"}, el("h3", null, "Oylama bağlantısı"));
+  const stt = el("span", {class:"st"}, st.voteUrl ? "Bağlantı adresi kayıtlı." : "Adres yok. Oylar elle girilir.");
+  conf.append(el("input", {id:"voteUrl", type:"url", placeholder:"https://script.google.com/macros/s/…/exec", value: st.voteUrl,
+    oninput: e => { st.voteUrl = e.target.value.trim(); stt.textContent = st.voteUrl ? "Bağlantı adresi kayıtlı." : "Adres yok. Oylar elle girilir."; save(); }}), stt);
+  w.append(el("div", {class:"cover"}, left, el("div", {class:"side"}, roles, conf)));
+}
+
+function renderVote(w, s, g){
+  const vs = vstate(s);
+  const done = !!st.choices[s.id];
+  w.append(el("div",{class:"eyebrow"}, el("span",null,"Soru "+g+" / "+STEPS.length), el("span",{class:"chip skill"}, s.skill), el("span",{class:"chip"}, s.format)));
+  if (s.pre) w.append(el("p", {class:"story", style:"margin:0;color:var(--muted)"}, s.pre));
+  w.append(el("h2", null, s.q));
+
+  // QR paneli
+  const qr = el("div", {class:"qr"});
+  if (st.voteUrl && !done){
+    const code = el("div", {class:"code", id:"qrcode"});
+    qr.append(code, el("div", {class:"cap"}, vs.round ? "YENİ OYLAMA · SORU "+g : "OKUT VE OYLA · SORU "+g));
+    setTimeout(() => {
+      try { new QRCode(code, { text: phoneLink(s), width: 360, height: 360, colorDark:"#0F1420", colorLight:"#FFFFFF", correctLevel: QRCode.CorrectLevel.M }); }
+      catch(e){ code.replaceChildren(el("div", {class:"ph"}, "QR oluşturulamadı. Elle sayıma geçin.")); }
+    }, 0);
+  } else if (done){
+    qr.append(el("div", {class:"ph"}, "Oylama kapandı."));
+  } else {
+    qr.append(el("div", {class:"ph"}, "Oylama bağlantısı girilmedi. Kapak sayfasından adresi ekleyin ya da oyları 1-2-3 tuşlarıyla elle girin."));
+  }
+  const left = el("div", {style:"display:flex;flex-direction:column;gap:0.5em;min-width:0"}, qr,
+    el("div", {class:"total", id:"total"}, ""));
+
+  const opts = el("div", {class:"opts"});
+  ["1","2","3"].forEach(k => {
+    const inPlay = vs.among.includes(k);
+    let cls = "opt";
+    if (done) cls += k === st.choices[s.id] ? " win" : " lose";
+    else if (!inPlay) cls += " out";
+    const can = !done && inPlay;
+    opts.append(el("div", {class:cls, "data-k":k},
+      el("i", {class:"fill", id:"fill-"+k}),
+      el("div", {class:"num"}, done && k === st.choices[s.id] ? "✓" : k),
+      el("div", {class:"txt"}, s.opts[k].t),
+      el("div", {class:"right"},
+        can ? el("button", {type:"button", "aria-label":"Seçenek "+k+" için elle oy azalt", onclick:()=>bump(s,k,-1)}, "−") : null,
+        el("output", {id:"cnt-"+k}, String(vs.counts[k])),
+        can ? el("button", {type:"button", "aria-label":"Seçenek "+k+" için elle oy ekle", onclick:()=>bump(s,k,1)}, "+") : null)));
+  });
+  w.append(el("div", {class:"vgrid"}, left, opts));
+
+  const bar = el("div", {class:"vbar"});
+  if (done){
+    const k = st.choices[s.id];
+    let txt = "Sınıf "+k+". seçeneği seçti ("+vs.counts[k]+" oy). Hikâye bu yoldan devam ediyor…";
+    if (vs.lottery) txt = "İkinci oylama da eşit bitti. Kura "+k+". seçeneği seçti.";
+    bar.append(el("div", {class:"banner ok"}, txt),
+      el("button", {class:"btn", type:"button", onclick:()=>{ clearFrom(STEPS.indexOf(s)); render(); }}, "Yeniden oyla"));
+  } else if (vs.phase === "tie"){
+    bar.append(el("div", {class:"banner tie"}, "Eşitlik! Seçenek " + vs.among.join(" ve ") + " arasında 10 saniyelik yeni oylama. QR'ı yeniden okutun."),
+      el("span", {class:"count", id:"tieCount"}, ""),
+      el("button", {class:"btn primary", type:"button", onclick:()=>reveal(s)}, "Sonucu göster"),
+      el("span", {class:"hint", id:"vmsg"}, ""));
+  } else {
+    bar.append(el("button", {class:"btn", type:"button", onclick:()=>{ closeEnds = Date.now()+20000; tick(); }}, "20 sn sonra kapat"),
+      el("span", {class:"count", id:"closeCount"}, ""),
+      el("button", {class:"btn primary", type:"button", onclick:()=>reveal(s)}, "Sonucu göster"),
+      el("span", {class:"hint", id:"vmsg"}, ""));
+  }
+  w.append(bar);
+  paintCounts(s);
+  if (!done) startPolling(s);
+  else if (st.autoNext === s.id){
+    st.autoNext = null;
+    advanceTimer = setTimeout(() => { const f = flow(); if (f[st.pos]?.t === "vote" && f[st.pos].step === s) next(); }, 2600);
+  }
+}
+function paintCounts(s){
+  const vs = vstate(s), sum = Math.max(1, total(vs));
+  ["1","2","3"].forEach(k => {
+    const o = document.getElementById("cnt-"+k); if (o) o.textContent = String(vs.counts[k]);
+    const fl = document.getElementById("fill-"+k); if (fl) fl.style.width = (vs.among.includes(k) ? (vs.counts[k]/sum*100) : 0) + "%";
+  });
+  const t = $("#total");
+  if (t) t.textContent = total(vs) + " oy" + (st.voteUrl ? (conn === "err" ? " · bağlantı sorunu, elle girin" : conn === "ok" ? " · canlı" : " · bağlanıyor…") : " · elle sayım");
+}
+function bump(s, k, d){
+  const vs = vstate(s); if (st.choices[s.id] || !vs.among.includes(k)) return;
+  if (vs.manual[k] + d < 0 && st.voteUrl) return;
+  vs.manual[k] = (vs.manual[k]||0) + d;
+  vs.counts[k] = Math.max(0, vs.counts[k] + d);
+  paintCounts(s); save();
+}
+function reveal(s){
+  const vs = vstate(s);
+  const max = Math.max(...vs.among.map(k => vs.counts[k]));
+  if (max === 0){ const m = $("#vmsg"); if (m) m.textContent = "Henüz oy yok."; return; }
+  const top = vs.among.filter(k => vs.counts[k] === max);
+  closeEnds = 0;
+  if (top.length === 1){ st.choices[s.id] = top[0]; vs.phase = "done"; st.autoNext = s.id; }
+  else if (vs.round === 0){
+    vs.phase = "tie"; vs.round = 1; vs.among = top;
+    top.forEach(k => { vs.counts[k] = 0; vs.manual[k] = 0; });
+    tieEnds = Date.now()+10000;
+  } else {
+    const k = top[Math.floor(Math.random()*top.length)];
+    vs.lottery = true; st.choices[s.id] = k; vs.phase = "done"; st.autoNext = s.id;
+  }
+  render();
+}
+
+function renderComplete(w, s){
+  const c = s.complete;
+  w.append(el("div",{class:"eyebrow"}, el("span",{class:"mic"}, "🎙 Sözlü katılım"), el("span",{class:"chip"}, c.title)));
+  w.append(el("p", {class:"story", style:"margin:0"}, c.intro));
+  const ta = el("textarea", {id:"ta-"+c.key, placeholder:c.ph, "aria-label":c.title});
+  ta.value = st.texts[c.key] || "";
+  ta.addEventListener("input", () => { st.texts[c.key] = ta.value.slice(0, 300); save(); });
+  w.append(el("div", {class:"compose"}, el("div", {class:"lead2"}, c.lead), ta, el("span", {class:"hint"}, c.hint)));
+}
+
+function renderPath(w){
+  w.append(el("div",{class:"eyebrow"}, el("span",null,"Yansıtma"), el("span",null,"Sınıfın yolu")));
+  w.append(el("h2", null, "Bu sınıf hikâyeyi böyle yazdı"));
+  const p = el("div", {class:"path"});
+  STEPS.forEach((s, i) => {
+    const k = st.choices[s.id], vs = st.vp[s.id] || {counts:{}};
+    const others = ["1","2","3"].filter(x => x !== k).map(x => s.opts[x].short).join(" · ");
+    p.append(el("div", {class:"prow"},
+      el("span", {class:"n"}, "S"+(i+1)),
+      el("div", {style:"min-width:0"}, k ? s.opts[k].short : "—", el("small", null, s.skill + " · Seçilmeyen: " + others)),
+      el("span", {class:"v"}, ["1","2","3"].map(x => x+":"+(vs.counts[x]||0)).join("  ") + (vs.lottery ? " · kura" : vs.round ? " · eşitlik" : ""))));
+    if (s.complete && st.texts[s.complete.key]) {
+      const lab = VOICE.find(v => v[0] === s.complete.key)[1];
+      p.append(el("div", {class:"prow voice"}, el("span", {class:"n"}, "🎙"), el("div", {style:"min-width:0"}, "“" + clean(st.texts[s.complete.key]) + "”", el("small", null, lab)), el("span")));
+    }
+  });
+  w.append(p);
+}
+function renderReflect(w){
+  w.append(el("div",{class:"eyebrow"}, el("span",{class:"chip skill"}, "Yansıtıcı düşünme"), el("span",null,"Kapanış")));
+  w.append(el("h2", null, "Durup düşünelim"));
+  const qs = [
+    "Hikâyenin başında Sarper hakkında hangi varsayımı yaptınız? Bu varsayım neye dayanıyordu?",
+    "Tespit aracı, Zeynep ve Sarper'in itirafı: Hangisi en güvenilir kanıttı, neden?",
+    "Öğretmen olduğunuzda ilk ödev yönergenize yapay zekâyla ilgili hangi cümleyi yazarsınız?"
+  ];
+  w.append(el("div", {class:"refl"}, qs.map((q,i) => el("div", null, el("b", null, String(i+1)), el("span", null, q)))));
+}
+function renderSources(w){
+  w.append(el("div",{class:"eyebrow"}, el("span",null,"Kaynaklar ve etik beyan")));
+  w.append(el("h2", null, "Kaynaklar"));
+  w.append(el("div", {class:"src"},
+    el("p", null, "Yılmaz, K. (2017). Eleştirel ve analitik düşünme. Ankara."),
+    el("p", null, "Paul, R., & Elder, L. (2021). The miniature guide to critical thinking: Concepts and tools (8th ed.). Rowman & Littlefield."),
+    el("p", null, "Facione, P. A. (2020). Critical thinking: What it is and why it counts. Insight Assessment."),
+    el("p", null, "Robin, B. R. (2008). Digital storytelling: A powerful technology tool for the 21st century classroom. Theory Into Practice, 47(3), 220–228."),
+    el("p", null, "Mishra, P., & Koehler, M. J. (2006). Technological pedagogical content knowledge: A framework for teacher knowledge. Teachers College Record, 108(6), 1017–1054."),
+    el("p", null, "Liang, W., Yuksekgonul, M., Mao, Y., Wu, E., & Zou, J. (2023). GPT detectors are biased against non-native English writers. Patterns, 4(7), 100779.")));
+  w.append(el("div", {class:"ethic"}, el("b", null, "Etik beyan. "),
+    "Hikâye kurgudur. Karakterler, okul ve kurumlar hayalidir; tespit aracı sonuçları temsilidir. Bu materyalin metin taslağı ve kodlanmasında yapay zekâdan (Claude) yararlanılmış, içerik grup üyelerince düzenlenmiş ve kontrol edilmiştir. Oylama anonimdir, katılımcılardan kişisel veri toplanmamıştır."));
+  const r = el("button", {class:"btn", type:"button", onclick:()=>{
+    if (!resetArm){ resetArm = true; r.textContent = "Emin misiniz? Tekrar basın"; setTimeout(()=>{ resetArm=false; if(r.isConnected) r.textContent="Baştan başla"; }, 3000); return; }
+    const keep = {roles:st.roles, voteUrl:st.voteUrl || DEFAULT_VOTE_URL}; st = Object.assign(blank(), keep); st.session = Math.random().toString(36).slice(2,8); resetArm = false; render(); }}, "Baştan başla");
+  w.append(el("div", {class:"vbar"}, r, el("span", {class:"hint"}, "Oylar ve yazılanlar silinir. Seslendirenler ve oylama bağlantısı kalır.")));
+}
+
+/* ============ GEZİNME ============ */
+function next(){
+  const f = flow(), scr = f[st.pos];
+  if (scr.t === "vote" && !st.choices[scr.step.id]){ reveal(scr.step); return; }
+  if (st.pos < f.length-1){ st.pos++; render(); window.scrollTo(0,0); }
+}
+function back(){ if (st.pos > 0){ st.pos--; render(); window.scrollTo(0,0); } }
+$("#nextBtn").addEventListener("click", next);
+$("#backBtn").addEventListener("click", back);
+$("#themeBtn").addEventListener("click", toggleTheme);
+$("#fsBtn").addEventListener("click", toggleFs);
+function toggleTheme(){
+  const r = document.documentElement;
+  const dark = r.dataset.theme ? r.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  r.dataset.theme = dark ? "light" : "dark";
+}
+function toggleFs(){
+  try { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen().catch(()=>{}); } catch(e) {}
+}
+document.addEventListener("keydown", e => {
+  if (e.target.closest?.("input,textarea")) return;
+  const f = flow(), scr = f[st.pos];
+  if (["ArrowRight","PageDown"," "].includes(e.key)){ e.preventDefault(); next(); }
+  else if (["ArrowLeft","PageUp"].includes(e.key)){ e.preventDefault(); back(); }
+  else if (e.key === "Enter" && scr.t === "vote" && !st.choices[scr.step.id]){ e.preventDefault(); reveal(scr.step); }
+  else if (/^Digit[123]$/.test(e.code) && scr.t === "vote"){ bump(scr.step, e.code.slice(-1), e.shiftKey ? -1 : 1); }
+  else if (e.key === "t" || e.key === "T") toggleTheme();
+  else if (e.key === "f" || e.key === "F") toggleFs();
+});
+
+/* ============ GERİ SAYIMLAR ============ */
+function tick(){
+  const f = flow(), scr = f[st.pos];
+  const tc = $("#tieCount");
+  if (tc && tieEnds){
+    const left = tieEnds - Date.now();
+    tc.textContent = left > 0 ? String(Math.ceil(left/1000)) : "0";
+    if (left <= 0){ tieEnds = 0; if (scr?.t === "vote") reveal(scr.step); }
+  }
+  const cc = $("#closeCount");
+  if (cc){
+    const left = closeEnds - Date.now();
+    cc.textContent = closeEnds ? (left > 0 ? String(Math.ceil(left/1000)) : "0") : "";
+    if (closeEnds && left <= 0){ closeEnds = 0; if (scr?.t === "vote") reveal(scr.step); }
+  }
+}
+setInterval(tick, 250);
+render();
+</script>
+
+</body>
+</html>
