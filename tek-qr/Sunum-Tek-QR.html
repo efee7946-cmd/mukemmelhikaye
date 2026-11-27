@@ -9,17 +9,21 @@
 <title>Sarper'in Yapay Zekâyla İmtihanı</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=JetBrains+Mono:wght@500;700&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 /* Layout: tek sahne, üstte ilerleme şeridi, ortada hikâye/oylama (QR + seçenek düğmeleri), altta gezinme. Projeksiyon için büyük tipografi. */
 :root{
-  --bg:#EEF1F5; --surface:#FFFFFF; --surface-2:#E2E7EE; --fg:#141A26; --muted:#5B6578; --line:#CBD3DE;
-  --signal:#B7790A; --alarm:#C9343A; --win:#17894D; --win-soft:#D5F0E1;
-  --o1:#D4473F; --o2:#B57E0B; --o3:#2273C9;
-  --o1-soft:#F8DEDC; --o2-soft:#F6EACB; --o3-soft:#D8E7F7;
-  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
-  --f-story:"Literata", Georgia, "Times New Roman", serif;
+  /* Açık tema: sıcak kırık beyaz zemin, siyaha yakın yazı, tek vurgu kırmızı; başlık ve metin Figtree, etiketler mono */
+  --bg:#F5F2EE; --surface:#FFFFFF; --surface-2:#ECE7E1; --fg:#151515; --muted:#6E6862; --line:#DDD5CC;
+  --signal:#D9432F; --alarm:#B8282E; --win:#1F7A4C; --win-soft:#DCEFE3;
+  --o1:#D9432F; --o2:#B57E0B; --o3:#2273C9;
+  --o1-soft:#F8DEDA; --o2-soft:#F6EACB; --o3-soft:#D8E7F7;
+  --f-display:"Figtree", "Segoe UI", system-ui, sans-serif;
+  --f-story:"Figtree", "Segoe UI", system-ui, sans-serif;
+  --tab-fill:transparent; --tab-rule:2px; --tab-radius:0; --tab-done-fill:transparent; --tab-done-rule:#A39B92;
+  --tab-now-fill:transparent; --tab-now-fg:var(--signal); --tab-w:500;
+  --eye-color:var(--signal); --eye-d:block; --num-border:1.5px solid var(--signal); --num-size:1.9em;
   --f-mono:"JetBrains Mono", Consolas, "Courier New", monospace;
   --base:clamp(17px, min(1.15vw, 2.5vh) + 7px, 38px);
 }
@@ -27,12 +31,20 @@
   --bg:#0F1420; --surface:#171E2D; --surface-2:#222B3D; --fg:#ECE8E1; --muted:#9AA3B5; --line:#2E384C;
   --signal:#F2B33D; --alarm:#F0605D; --win:#3DD68C; --win-soft:#173A2A;
   --o1:#F0706A; --o2:#F2B33D; --o3:#5DAEF7;
-  --o1-soft:#3A2228; --o2-soft:#3A3122; --o3-soft:#1D3048; color-scheme:dark }}
+  --o1-soft:#3A2228; --o2-soft:#3A3122; --o3-soft:#1D3048; color-scheme:dark;
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif; --f-story:"Literata", Georgia, "Times New Roman", serif;
+  --tab-fill:var(--surface-2); --tab-rule:0px; --tab-radius:6px; --tab-done-fill:var(--line); --tab-done-rule:transparent;
+  --tab-now-fill:var(--signal); --tab-now-fg:var(--bg); --tab-w:700;
+  --eye-color:var(--muted); --eye-d:none; --num-border:0; --num-size:auto; }}
 :root[data-theme="dark"]{
   --bg:#0F1420; --surface:#171E2D; --surface-2:#222B3D; --fg:#ECE8E1; --muted:#9AA3B5; --line:#2E384C;
   --signal:#F2B33D; --alarm:#F0605D; --win:#3DD68C; --win-soft:#173A2A;
   --o1:#F0706A; --o2:#F2B33D; --o3:#5DAEF7;
-  --o1-soft:#3A2228; --o2-soft:#3A3122; --o3-soft:#1D3048; color-scheme:dark }
+  --o1-soft:#3A2228; --o2-soft:#3A3122; --o3-soft:#1D3048; color-scheme:dark;
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif; --f-story:"Literata", Georgia, "Times New Roman", serif;
+  --tab-fill:var(--surface-2); --tab-rule:0px; --tab-radius:6px; --tab-done-fill:var(--line); --tab-done-rule:transparent;
+  --tab-now-fill:var(--signal); --tab-now-fg:var(--bg); --tab-w:700;
+  --eye-color:var(--muted); --eye-d:none; --num-border:0; --num-size:auto; }
 
 html,body{height:100%}
 body{background:var(--bg);color:var(--fg);font-family:var(--f-story);font-size:var(--base);line-height:1.55;
@@ -44,9 +56,9 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 .top{display:flex;align-items:center;gap:0.9em;flex-wrap:wrap;font-family:var(--f-mono);font-size:0.6em;color:var(--muted)}
 .brand{font-family:var(--f-display);font-weight:800;font-size:1.35em;color:var(--fg);letter-spacing:-0.01em}
 .prog{display:flex;gap:6px;flex:1;min-width:220px}
-.prog span{flex:1;height:30px;border-radius:6px;background:var(--surface-2);display:grid;place-items:center;font-weight:700;color:var(--muted);transition:background .3s,color .3s}
-.prog span.done{background:var(--line);color:var(--fg)}
-.prog span.now{background:var(--signal);color:var(--bg)}
+.prog span{flex:1;height:30px;box-sizing:border-box;border-radius:var(--tab-radius);background:var(--tab-fill);border-top:var(--tab-rule) solid var(--line);display:grid;place-items:center;font-weight:var(--tab-w);color:var(--muted);transition:background .3s,color .3s,border-color .3s}
+.prog span.done{background:var(--tab-done-fill);border-top-color:var(--tab-done-rule);color:var(--fg)}
+.prog span.now{background:var(--tab-now-fill);border-top-color:var(--signal);color:var(--tab-now-fg)}
 .tbtn{background:none;border:1px solid var(--line);border-radius:6px;padding:4px 10px;color:var(--muted);font-family:var(--f-mono);font-size:1em}
 .tbtn:hover{color:var(--fg);border-color:var(--muted)}
 
@@ -70,7 +82,8 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
   .stage .opt .txt{font-size:1em}
   .stage .path{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0.5em 0.9em}
 }
-.eyebrow{font-family:var(--f-mono);font-size:0.58em;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);display:flex;gap:0.8em;flex-wrap:wrap;align-items:center}
+.eyebrow{font-family:var(--f-mono);font-size:0.58em;letter-spacing:0.12em;text-transform:uppercase;color:var(--eye-color);display:flex;gap:0.8em;flex-wrap:wrap;align-items:center}
+.eyebrow::before{content:"";display:var(--eye-d);width:2.2em;height:1.5px;background:currentColor}
 .chip{border:1px solid var(--line);border-radius:999px;padding:3px 12px;color:var(--fg)}
 .chip.skill{border-color:var(--signal);color:var(--signal)}
 h1,h2{font-family:var(--f-display);text-wrap:balance;letter-spacing:-0.015em;margin:0;line-height:1.12}
@@ -103,7 +116,8 @@ h2{font-size:1.6em;font-weight:700}
 .team ol{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:0.35em;counter-reset:u}
 .team li{display:grid;grid-template-columns:1.6em 1fr auto;gap:0.6em;align-items:baseline;font-size:0.85em;counter-increment:u;border-bottom:1px solid var(--line);padding-bottom:0.3em}
 .team li:last-child{border-bottom:0;padding-bottom:0}
-.team li::before{content:counter(u);font-family:var(--f-mono);font-weight:700;color:var(--signal);font-size:0.85em}
+.team li::before{content:counter(u);font-family:var(--f-mono);font-weight:700;color:var(--signal);font-size:0.85em;width:var(--num-size);height:var(--num-size);border:var(--num-border);border-radius:50%;display:grid;place-items:center;box-sizing:border-box;align-self:center}
+.team li{align-items:center}
 .team .ad{font-weight:700}
 .team .no{font-family:var(--f-mono);color:var(--muted);font-size:0.85em}
 .cast{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:0.8em}
@@ -171,7 +185,7 @@ h2{font-size:1.6em;font-weight:700}
 .prow .v{font-family:var(--f-mono);font-size:0.8em;color:var(--muted);white-space:nowrap}
 .refl{display:flex;flex-direction:column;gap:0.9em;max-width:42em}
 .refl div{display:grid;grid-template-columns:2em 1fr;gap:0.6em;font-family:var(--f-display);font-size:1.05em}
-.refl b{font-family:var(--f-mono);color:var(--signal)}
+.refl b{font-family:var(--f-mono);color:var(--signal);width:var(--num-size);height:var(--num-size);border:var(--num-border);border-radius:50%;display:grid;place-items:center;box-sizing:border-box;font-size:0.8em}
 .src{font-size:0.72em;display:flex;flex-direction:column;gap:0.5em;max-width:48em}
 .src p{margin:0;padding-left:1.5em;text-indent:-1.5em}
 .ethic{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:0.9em 1.1em;font-size:0.72em;max-width:48em}
@@ -184,9 +198,9 @@ h2{font-size:1.6em;font-weight:700}
 
 /* İllüstrasyonlar: sunuma gömülü SVG, renkler temaya göre değişir */
 :root{
-  --a-sky:#CFE0F2; --a-wall:#E4E8EF; --a-wall2:#D2D9E4; --a-floor:#C3CCD9; --a-wood:#C08F62; --a-wood2:#946A47;
-  --a-ink:#1B2230; --a-paper:#FFFFFF; --a-line:#C9D0DB; --a-screen:#1B2230; --a-board:#2F4A3F; --a-moon:#F4E7B8; --a-tie:#B2434A;
-  --frame:#F7F3EA;
+  --a-sky:#DCE5EC; --a-wall:#EDE7E0; --a-wall2:#DFD7CD; --a-floor:#CEC4B8; --a-wood:#C08F62; --a-wood2:#946A47;
+  --a-ink:#1B1B1B; --a-paper:#FFFFFF; --a-line:#D3CAC0; --a-screen:#1B1B1B; --a-board:#2F4A3F; --a-moon:#F4E7B8; --a-tie:#B2434A;
+  --frame:#FFFFFF;
   --sk1:#EDBB96; --sk2:#C98E66; --sk3:#9E6A48;
   --h1:#3A2A22; --h2:#1D1D24; --h3:#7A4A2A; --h4:#9097A1;
   --c-elif:#D69A2D; --c-sarper:#2F6DB5; --c-betul:#B2434A; --c-yusuf:#4D5566; --c-zeynep:#2E9466; --c-muhabir:#7A5BC7; --c-grey:#7C8493; --c-crowd:#AEB6C3;
@@ -872,7 +886,7 @@ function render(){
 
   const prog = $("#prog"); prog.replaceChildren();
   ["Giriş","1","2","3","4","5","6","7"].forEach((lab, i) => {
-    const g = scr.g === 8 ? 8 : scr.g;
+    const g = scr.g === 8 ? 8 : (scr.g ?? 0);  // giriş ekranlarında bölüm yok: "Giriş" etkin
     prog.append(el("span", {class: i<g ? "done" : (i===g ? "now" : "")}, lab));
   });
   const isLast = st.pos === f.length-1;
