@@ -1,6 +1,6 @@
-# Mükemmel Ödev
+# Sarper'in Yapay Zekâyla İmtihanı
 
-Yapay zekâ ve akademik dürüstlük üzerine, 7 karar noktalı interaktif bir sınıf sunumu. Elif Öğretmen'in, Sarper'in ödevinin yapay zekâyla yazıldığından şüphelendiği hikâyede öğrenciler her adımda telefonlarından QR kodla oy verir; çoğunluğun seçimi hikâyeyi ilerletir (eşitlikte yeniden oylama yapılır).
+Yapay zekâ ve akademik dürüstlük üzerine, 7 karar noktalı interaktif bir sınıf sunumu (ilk adı: "Mükemmel Ödev"). Elif Öğretmen'in, Sarper'in ödevinin yapay zekâyla yazıldığından şüphelendiği hikâyede öğrenciler her adımda telefonlarından QR kodla oy verir; çoğunluğun seçimi hikâyeyi ilerletir (eşitlikte yeniden oylama yapılır).
 
 ## Dosyalar
 

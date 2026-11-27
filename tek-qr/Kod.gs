@@ -1,5 +1,5 @@
 /**
- * Mükemmel Ödev · TEK QR oylama sunucusu (Google Apps Script) · TEK DOSYA
+ * Sarper'in Yapay Zekâyla İmtihanı · TEK QR oylama sunucusu (Google Apps Script) · TEK DOSYA
  *
  * Kurulum:
  * 1. Bu dosyanın tamamını Apps Script'teki Kod.gs'ye yapıştırın (eskisini silin) ve Ctrl+S ile kaydedin.
@@ -16,7 +16,7 @@ function doGet(e) {
   if (p.action === 'results') return json_(results_(p.q));
   if (p.action === 'sync') return json_(sync_(p));
   return HtmlService.createHtmlOutput(OY_HTML)
-    .setTitle('Mükemmel Ödev · Oy ver')
+    .setTitle("Sarper'in Yapay Zekâyla İmtihanı · Oy ver")
     .addMetaTag('viewport', 'width=device-width, initial-scale=1');
 }
 
@@ -115,7 +115,7 @@ var OY_HTML = `<!DOCTYPE html>
 </head>
 <body>
 <div class="wrap">
-  <div class="eye" id="eye">Mükemmel Ödev</div>
+  <div class="eye" id="eye">Sarper'in Yapay Zekâyla İmtihanı</div>
   <h1 id="q"></h1>
   <div id="opts" style="display:flex;flex-direction:column;gap:10px"></div>
   <div class="msg" id="msg" hidden></div>
@@ -144,7 +144,7 @@ var OY_HTML = `<!DOCTYPE html>
     if (sig === shown) return;
     shown = sig; curQ = step ? s.q : ''; btns = []; box.textContent = ''; msg.hidden = true;
     if (!step){
-      eye.textContent = 'Mükemmel Ödev';
+      eye.textContent = "Sarper'in Yapay Zekâyla İmtihanı";
       title.textContent = seenQuestion ? 'Sıradaki soruyu bekle' : 'Bağlandın!';
       say('Soru ekrana gelince telefonunda kendiliğinden açılacak. Bu sayfayı kapatma.');
       return;
