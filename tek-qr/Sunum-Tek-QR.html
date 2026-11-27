@@ -727,9 +727,15 @@ try { const s = JSON.parse(localStorage.getItem(KEY) || "null"); if (s && typeof
 let yeniOturum = true;
 try { yeniOturum = !sessionStorage.getItem(KEY + "-acik"); sessionStorage.setItem(KEY + "-acik", "1"); } catch(e) {}
 if (yeniOturum) st = Object.assign(blank(), { roles: st.roles, voteUrl: st.voteUrl });
-const DEFAULT_VOTE_URL = "https://script.google.com/macros/s/AKfycby1fZpDe6-bJFPrw1YEoE83UlzyI7i_ObOsR6JgZtlndN54KpJAmYakqakLvZ0FFBXF/exec";
-const OLD_VOTE_URL = "https://script.google.com/macros/s/AKfycbxUeQs6d1V-k9KzCtUpifXVVomJTg_ENvDjFL4j_kw6vaIzC043m3GoU6AhnxVAelZl/exec";
-if (!st.voteUrl || st.voteUrl === OLD_VOTE_URL) st.voteUrl = DEFAULT_VOTE_URL;
+const DEFAULT_VOTE_URL = "https://script.google.com/macros/s/AKfycbxXRwuu64nRr9v6RwrVFvJnWYSl50G02zQjYWldKIG33J7ki-_IteOyQNsxe8lg97IzWw/exec";
+/* Eski dağıtımlar: tarayıcıda kayıtlıysa yeni adrese geçirilir */
+const OLD_VOTE_URLS = [
+  "https://script.google.com/macros/s/AKfycbzsh2OXVluB9_2xGHAnb70mFqVU61Ks9xWR_GzXfhLCMi281-ExbVCb0VnLtji_LQ32Kw/exec",
+  "https://script.google.com/macros/s/AKfycbyYpCDV9ev5_q6xntn6FsxAtvsPPXRnYVxMbfVd57UHgaoyAURn9kKKphRr0ZB-4Yyg2g/exec",
+  "https://script.google.com/macros/s/AKfycby1fZpDe6-bJFPrw1YEoE83UlzyI7i_ObOsR6JgZtlndN54KpJAmYakqakLvZ0FFBXF/exec",
+  "https://script.google.com/macros/s/AKfycbxUeQs6d1V-k9KzCtUpifXVVomJTg_ENvDjFL4j_kw6vaIzC043m3GoU6AhnxVAelZl/exec"
+];
+if (!st.voteUrl || OLD_VOTE_URLS.includes(st.voteUrl)) st.voteUrl = DEFAULT_VOTE_URL;
 /* Kod.gs içindeki SUNUCU_ANAHTARI ile aynı olmalı */
 const PRESENTER_KEY = "4aec09d9610a541a";
 if (!st.session) st.session = Math.random().toString(36).slice(2, 8);
