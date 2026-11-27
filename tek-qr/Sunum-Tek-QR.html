@@ -37,7 +37,7 @@
 html,body{height:100%}
 body{background:var(--bg);color:var(--fg);font-family:var(--f-story);font-size:var(--base);line-height:1.55;
   padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
-.app{max-width:1180px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;gap:1.1em;padding-block:0.9em 1.1em}
+.app{max-width:1500px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;gap:1.1em;padding-block:0.9em 1.1em}
 button{font:inherit;color:inherit;cursor:pointer}
 button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--signal);outline-offset:2px}
 
@@ -51,6 +51,20 @@ button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px soli
 .tbtn:hover{color:var(--fg);border-color:var(--muted)}
 
 .stage{flex:1;display:flex;flex-direction:column;gap:0.8em;min-width:0}
+/* Akıllı tahta: geniş ekranda sayfa kaymaz; içerik sahneye sığacak kadar küçülür (fit()) */
+@media (min-width:761px){
+  html,body{overflow:hidden}
+  .app{height:100vh;height:100dvh;min-height:0;box-sizing:border-box}
+  .stage{min-height:0;overflow:hidden}
+  .stage .art svg{max-height:calc(100dvh - 9em);margin-inline:auto}
+  .scene-grid{align-items:center}
+  .cover{padding-top:0.4em}
+  .cover-art .art{width:fit-content;max-width:100%}
+  .cover-art{margin-bottom:0.6em}
+  .cover-art .art svg{height:16vh;width:auto;max-width:100%}
+  .cover .lead{margin:0.4em 0 0.7em}
+  .stage .path{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0.5em 0.9em}
+}
 .eyebrow{font-family:var(--f-mono);font-size:0.58em;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);display:flex;gap:0.8em;flex-wrap:wrap;align-items:center}
 .chip{border:1px solid var(--line);border-radius:999px;padding:3px 12px;color:var(--fg)}
 .chip.skill{border-color:var(--signal);color:var(--signal)}
@@ -797,7 +811,7 @@ function render(){
   $("#backBtn").disabled = st.pos === 0;
   $("#nextBtn").disabled = isLast && !blocked;
   $("#nextBtn").textContent = blocked ? "Sonucu göster" : (scr.t === "cover" ? "Başla →" : "İleri →");
-  save(); tick(); sync();
+  save(); tick(); sync(); fit();
 }
 
 function renderCover(w){
@@ -996,6 +1010,20 @@ function toggleTheme(){
 function toggleFs(){
   try { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen().catch(()=>{}); } catch(e) {}
 }
+/* Sahneye sığdırma: önce tam boy, taşarsa yazı adım adım küçülür (en az %55). */
+const wideMQ = matchMedia("(min-width:761px)");
+function fit(){
+  const stage = $("#stage"), wrap = stage && stage.firstElementChild;
+  if (!wrap) return;
+  wrap.style.fontSize = "";
+  if (!wideMQ.matches) return;
+  const room = stage.clientHeight;
+  let f = 1;
+  while (wrap.scrollHeight > room && f > 0.55){ f = Math.round((f - 0.03) * 100) / 100; wrap.style.fontSize = f + "em"; }
+}
+addEventListener("resize", fit);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+if (window.ResizeObserver){ let fitQueued = false; new ResizeObserver(() => { if (fitQueued) return; fitQueued = true; requestAnimationFrame(() => { fitQueued = false; fit(); }); }).observe(document.getElementById("stage")); }
 document.addEventListener("keydown", e => {
   if (e.target.closest?.("input,textarea")) return;
   const f = flow(), scr = f[st.pos];
