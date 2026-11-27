@@ -28,23 +28,19 @@
   --base:clamp(17px, min(1.15vw, 2.5vh) + 7px, 38px);
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
-  --bg:#0F1420; --surface:#171E2D; --surface-2:#222B3D; --fg:#ECE8E1; --muted:#9AA3B5; --line:#2E384C;
-  --signal:#F2B33D; --alarm:#F0605D; --win:#3DD68C; --win-soft:#173A2A;
-  --o1:#F0706A; --o2:#F2B33D; --o3:#5DAEF7;
-  --o1-soft:#3A2228; --o2-soft:#3A3122; --o3-soft:#1D3048; color-scheme:dark;
-  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif; --f-story:"Literata", Georgia, "Times New Roman", serif;
-  --tab-fill:var(--surface-2); --tab-rule:0px; --tab-radius:6px; --tab-done-fill:var(--line); --tab-done-rule:transparent;
-  --tab-now-fill:var(--signal); --tab-now-fg:var(--bg); --tab-w:700;
-  --eye-color:var(--muted); --eye-d:none; --num-border:0; --num-size:auto; }}
+  /* Koyu tema: açık temanın aynısı, sıcak siyah zemin; vurgu kırmızı, Figtree, çizgili sekmeler */
+  --bg:#141210; --surface:#1E1B18; --surface-2:#2A2622; --fg:#F2EEE9; --muted:#A39B92; --line:#37322C;
+  --signal:#F2634E; --alarm:#F2786B; --win:#4CC98A; --win-soft:#17301F;
+  --o1:#F2634E; --o2:#E8B03E; --o3:#5DAEF7;
+  --o1-soft:#3A201B; --o2-soft:#382C17; --o3-soft:#1A2B3E; color-scheme:dark;
+  --tab-done-rule:#6E665D; }}
 :root[data-theme="dark"]{
-  --bg:#0F1420; --surface:#171E2D; --surface-2:#222B3D; --fg:#ECE8E1; --muted:#9AA3B5; --line:#2E384C;
-  --signal:#F2B33D; --alarm:#F0605D; --win:#3DD68C; --win-soft:#173A2A;
-  --o1:#F0706A; --o2:#F2B33D; --o3:#5DAEF7;
-  --o1-soft:#3A2228; --o2-soft:#3A3122; --o3-soft:#1D3048; color-scheme:dark;
-  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif; --f-story:"Literata", Georgia, "Times New Roman", serif;
-  --tab-fill:var(--surface-2); --tab-rule:0px; --tab-radius:6px; --tab-done-fill:var(--line); --tab-done-rule:transparent;
-  --tab-now-fill:var(--signal); --tab-now-fg:var(--bg); --tab-w:700;
-  --eye-color:var(--muted); --eye-d:none; --num-border:0; --num-size:auto; }
+  /* Koyu tema: açık temanın aynısı, sıcak siyah zemin; vurgu kırmızı, Figtree, çizgili sekmeler */
+  --bg:#141210; --surface:#1E1B18; --surface-2:#2A2622; --fg:#F2EEE9; --muted:#A39B92; --line:#37322C;
+  --signal:#F2634E; --alarm:#F2786B; --win:#4CC98A; --win-soft:#17301F;
+  --o1:#F2634E; --o2:#E8B03E; --o3:#5DAEF7;
+  --o1-soft:#3A201B; --o2-soft:#382C17; --o3-soft:#1A2B3E; color-scheme:dark;
+  --tab-done-rule:#6E665D;}
 
 html,body{height:100%}
 body{background:var(--bg);color:var(--fg);font-family:var(--f-story);font-size:var(--base);line-height:1.55;
@@ -206,11 +202,11 @@ h2{font-size:1.6em;font-weight:700}
   --c-elif:#D69A2D; --c-sarper:#2F6DB5; --c-betul:#B2434A; --c-yusuf:#4D5566; --c-zeynep:#2E9466; --c-muhabir:#7A5BC7; --c-grey:#7C8493; --c-crowd:#AEB6C3;
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
-  --a-sky:#0B1222; --a-wall:#1B2335; --a-wall2:#242E44; --a-floor:#141B2A; --a-wood:#6A4E35; --a-wood2:#4C3824;
-  --a-ink:#0B0F18; --a-paper:#DCE1EA; --a-line:#9AA3B5; --a-screen:#0B0F18; --a-board:#1E3029; --a-moon:#F2DFA0; --c-crowd:#3A4459; --frame:#2A3448 }}
+  --a-sky:#151A22; --a-wall:#26221E; --a-wall2:#302B26; --a-floor:#1B1815; --a-wood:#6A4E35; --a-wood2:#4C3824;
+  --a-ink:#0E0C0B; --a-paper:#E6E0D8; --a-line:#9C948A; --a-screen:#0E0C0B; --a-board:#1E3029; --a-moon:#F2DFA0; --c-crowd:#4A433C; --frame:#2C2824 }}
 :root[data-theme="dark"]{
-  --a-sky:#0B1222; --a-wall:#1B2335; --a-wall2:#242E44; --a-floor:#141B2A; --a-wood:#6A4E35; --a-wood2:#4C3824;
-  --a-ink:#0B0F18; --a-paper:#DCE1EA; --a-line:#9AA3B5; --a-screen:#0B0F18; --a-board:#1E3029; --a-moon:#F2DFA0; --c-crowd:#3A4459; --frame:#2A3448 }
+  --a-sky:#151A22; --a-wall:#26221E; --a-wall2:#302B26; --a-floor:#1B1815; --a-wood:#6A4E35; --a-wood2:#4C3824;
+  --a-ink:#0E0C0B; --a-paper:#E6E0D8; --a-line:#9C948A; --a-screen:#0E0C0B; --a-board:#1E3029; --a-moon:#F2DFA0; --c-crowd:#4A433C; --frame:#2C2824 }
 .art{border-radius:10px;overflow:hidden;border:10px solid var(--frame);outline:2px solid var(--line);box-shadow:0 12px 28px rgba(0,0,0,.28);background:var(--a-wall);line-height:0}
 .art svg{width:100%;height:auto;display:block}
 .art text{font-family:var(--f-mono);font-weight:700}
@@ -886,7 +882,7 @@ function render(){
 
   const prog = $("#prog"); prog.replaceChildren();
   ["Giriş","1","2","3","4","5","6","7"].forEach((lab, i) => {
-    const g = scr.g === 8 ? 8 : (scr.g ?? 0);  // giriş ekranlarında bölüm yok: "Giriş" etkin
+    const g = Math.max(0, scr.g ?? 0);  // kapak, karakterler ve QR (-1) de "Giriş" sayılır
     prog.append(el("span", {class: i<g ? "done" : (i===g ? "now" : "")}, lab));
   });
   const isLast = st.pos === f.length-1;
